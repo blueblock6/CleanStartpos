@@ -1,0 +1,16 @@
+{
+	"geode": "2.0.0",
+	"gd": {
+		"win": "2.204"	
+	},
+	"version": "v1.0.0",
+	"id": "blueblock6.cleanstartpos",
+	"name": "Clean Startpos",
+	"developer": "BlueBlock6",
+	"description": "Puts all the Startpos options on one page",
+	"resources": {
+		"sprites": [
+			"resources/example.png"
+		]
+	}
+}
