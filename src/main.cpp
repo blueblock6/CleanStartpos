@@ -1,4 +1,3 @@
-#include <Geode/Geode.hpp>
 #include <Geode/modify/LevelSettingsLayer.hpp>
 
 using namespace geode::prelude;
@@ -36,7 +35,6 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
             as<CCMenuItemSpriteExtra*>(as<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
         }
         as<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
-        as<CCMenuItemSpriteExtra*>(sender)->setScale(1);
     }
 
     void setSpeed(CCObject* sender) {
@@ -45,26 +43,15 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
             as<CCMenuItemSpriteExtra*>(as<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
         }
         as<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
-        as<CCMenuItemSpriteExtra*>(sender)->setScale(0.8);
     }
 	
+    $override
     bool init(LevelSettingsObject* p0, LevelEditorLayer* p1) {
-        
         if(!LevelSettingsLayer::init(p0, p1)) return false;
 
         auto layer = as<CCLayer*>(this->getChildren()->objectAtIndex(0));
-        
-        bool isStartpos = false;
-        CCObject* child = nullptr;
-        CCARRAY_FOREACH(layer->getChildren(), child) {
-            if(typeinfo_cast<CCLabelBMFont*>(child)) {
-                if(as<std::string>(as<CCLabelBMFont*>(child)->getString()) == "Reset\nCamera") {
-                    isStartpos = true;
-                }
-            }
-        }
 
-        if(!isStartpos) return true;
+        if(layer->getChildrenCount() > 13) return true;
 
         auto menu = as<CCMenu*>(layer->getChildren()->objectAtIndex(1));
         menu->setUserObject(p0);
@@ -86,12 +73,12 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         as<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPositionY(100);
         // Disable
         as<CCNode*>(menu->getChildren()->objectAtIndex(1))->setPosition(ccp(210, -60));
-        as<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(495, 120));
+        as<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(495, 122.5));
         // Reset Camera
         as<CCNode*>(menu->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -20));
         as<CCNode*>(menu->getChildren()->objectAtIndex(2))->setScale(1.143);
 		auto resetText = CCLabelBMFont::create("Rst Cam", "goldFont.fnt");
-        resetText->setPosition(ccp(495, 160));
+        resetText->setPosition(ccp(495, 162.5));
         resetText->setScale(0.6);
         layer->addChild(resetText);
 
@@ -116,7 +103,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(reverse);
         
         auto reverseText = CCLabelBMFont::create("Reverse", "goldFont.fnt");
-        reverseText->setPosition(ccp(495, 200));
+        reverseText->setPosition(ccp(495, 202.5));
         reverseText->setScale(0.6);
         layer->addChild(reverseText);
         
@@ -128,7 +115,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(rotate);
         
         auto rotateText = CCLabelBMFont::create("Rotate", "goldFont.fnt");
-        rotateText->setPosition(ccp(495, 240));
+        rotateText->setPosition(ccp(495, 242.5));
         rotateText->setScale(0.6);
         layer->addChild(rotateText);
         
@@ -140,7 +127,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(mirror);
         
         auto mirrorText = CCLabelBMFont::create("Mirror", "goldFont.fnt");
-        mirrorText->setPosition(ccp(75, 120));
+        mirrorText->setPosition(ccp(75, 122.5));
         mirrorText->setScale(0.6);
         layer->addChild(mirrorText);
         
@@ -152,7 +139,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(dual);
         
         auto dualText = CCLabelBMFont::create("Dual", "goldFont.fnt");
-        dualText->setPosition(ccp(75, 160));
+        dualText->setPosition(ccp(75, 162.5));
         dualText->setScale(0.6);
         layer->addChild(dualText);
         
@@ -164,7 +151,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(mini);
         
         auto miniText = CCLabelBMFont::create("Mini", "goldFont.fnt");
-        miniText->setPosition(ccp(75, 200));
+        miniText->setPosition(ccp(75, 202.5));
         miniText->setScale(0.6);
         layer->addChild(miniText);
         
@@ -176,7 +163,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(flip);
         
         auto flipText = CCLabelBMFont::create("Flip", "goldFont.fnt");
-        flipText->setPosition(ccp(75, 240));
+        flipText->setPosition(ccp(75, 242.5));
         flipText->setScale(0.6);
         layer->addChild(flipText);
         
@@ -233,35 +220,30 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         auto slowSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_01_001.png"), this, menu_selector(CleanStartpos::setSpeed));
         slowSpeed->setPosition(ccp(-122.5, 10));
         if(p0->m_startSpeed != Speed::Slow) slowSpeed->setColor({125, 125, 125});
-        slowSpeed->setScale(0.8);
         slowSpeed->setTag(301);
         menu->addChild(slowSpeed);
         
         auto normalSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_02_001.png"), this, menu_selector(CleanStartpos::setSpeed));
         normalSpeed->setPosition(ccp(-81.625, 10));
         if(p0->m_startSpeed != Speed::Normal) normalSpeed->setColor({125, 125, 125});
-        normalSpeed->setScale(0.8);
         normalSpeed->setTag(300);
         menu->addChild(normalSpeed);
         
         auto doubleSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_03_001.png"), this, menu_selector(CleanStartpos::setSpeed));
         doubleSpeed->setPosition(ccp(-33, 10));
         if(p0->m_startSpeed != Speed::Fast) doubleSpeed->setColor({125, 125, 125});
-        doubleSpeed->setScale(0.8);
         doubleSpeed->setTag(302);
         menu->addChild(doubleSpeed);
         
         auto tripleSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_04_001.png"), this, menu_selector(CleanStartpos::setSpeed));
         tripleSpeed->setPosition(ccp(31.625, 10));
         if(p0->m_startSpeed != Speed::Faster) tripleSpeed->setColor({125, 125, 125});
-        tripleSpeed->setScale(0.8);
         tripleSpeed->setTag(303);
         menu->addChild(tripleSpeed);
         
         auto quadSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_05_001.png"), this, menu_selector(CleanStartpos::setSpeed));
         quadSpeed->setPosition(ccp(105.5, 10));
         if(p0->m_startSpeed != Speed::Fastest) quadSpeed->setColor({125, 125, 125});
-        quadSpeed->setScale(0.8);
         quadSpeed->setTag(304);
         menu->addChild(quadSpeed);
 
