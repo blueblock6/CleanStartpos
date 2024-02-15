@@ -56,29 +56,32 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         auto menu = as<CCMenu*>(layer->getChildren()->objectAtIndex(1));
         menu->setUserObject(p0);
 
+        layer->setPosition(CCDirector::sharedDirector()->getWinSize() / 2);
+        menu->setPosition(ccp(0, 0));
+
         // Menu bg
         as<CCNode*>(layer->getChildren()->objectAtIndex(0))->setContentSize(ccp(500, 190));
-        as<CCNode*>(layer->getChildren()->objectAtIndex(0))->setPosition(ccp(284.5, 170));
+        as<CCNode*>(layer->getChildren()->objectAtIndex(0))->setPosition(ccp(0, 0));
         // OK
         as<CCNode*>(menu->getChildren()->objectAtIndex(0))->setPositionY(-60);
         // Target Order
-        as<CCNode*>(layer->getChildren()->objectAtIndex(4))->setPositionY(130);
-        as<CCNode*>(layer->getChildren()->objectAtIndex(5))->setPositionY(100);
+        as<CCNode*>(layer->getChildren()->objectAtIndex(4))->setPosition(ccp(-100, -30));
+        as<CCNode*>(layer->getChildren()->objectAtIndex(5))->setPosition(ccp(-100, -60));
         as<CCNode*>(layer->getChildren()->objectAtIndex(5))->setContentSize(ccp(80, 30));
-        as<CCNode*>(layer->getChildren()->objectAtIndex(6))->setPositionY(100);
+        as<CCNode*>(layer->getChildren()->objectAtIndex(6))->setPosition(ccp(-100, -60));
         // Target Channel
-        as<CCNode*>(layer->getChildren()->objectAtIndex(7))->setPositionY(130);
-        as<CCNode*>(layer->getChildren()->objectAtIndex(8))->setPositionY(100);
+        as<CCNode*>(layer->getChildren()->objectAtIndex(7))->setPosition(ccp(100, -30));
+        as<CCNode*>(layer->getChildren()->objectAtIndex(8))->setPosition(ccp(100, -60));
         as<CCNode*>(layer->getChildren()->objectAtIndex(8))->setContentSize(ccp(80, 30));
-        as<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPositionY(100);
+        as<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPosition(ccp(100, -60));
         // Disable
         as<CCNode*>(menu->getChildren()->objectAtIndex(1))->setPosition(ccp(210, -60));
-        as<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(495, 122.5));
+        as<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -37.5));
         // Reset Camera
         as<CCNode*>(menu->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -20));
         as<CCNode*>(menu->getChildren()->objectAtIndex(2))->setScale(1.143);
 		auto resetText = CCLabelBMFont::create("Rst Cam", "goldFont.fnt");
-        resetText->setPosition(ccp(495, 162.5));
+        resetText->setPosition(ccp(210, 2.5));
         resetText->setScale(0.6);
         layer->addChild(resetText);
 
@@ -103,7 +106,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(reverse);
         
         auto reverseText = CCLabelBMFont::create("Reverse", "goldFont.fnt");
-        reverseText->setPosition(ccp(495, 202.5));
+        reverseText->setPosition(ccp(210, 42.5));
         reverseText->setScale(0.6);
         layer->addChild(reverseText);
         
@@ -115,7 +118,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(rotate);
         
         auto rotateText = CCLabelBMFont::create("Rotate", "goldFont.fnt");
-        rotateText->setPosition(ccp(495, 242.5));
+        rotateText->setPosition(ccp(210, 82.5));
         rotateText->setScale(0.6);
         layer->addChild(rotateText);
         
@@ -127,7 +130,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(mirror);
         
         auto mirrorText = CCLabelBMFont::create("Mirror", "goldFont.fnt");
-        mirrorText->setPosition(ccp(75, 122.5));
+        mirrorText->setPosition(ccp(-210, -37.5));
         mirrorText->setScale(0.6);
         layer->addChild(mirrorText);
         
@@ -139,7 +142,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(dual);
         
         auto dualText = CCLabelBMFont::create("Dual", "goldFont.fnt");
-        dualText->setPosition(ccp(75, 162.5));
+        dualText->setPosition(ccp(-210, 2.5));
         dualText->setScale(0.6);
         layer->addChild(dualText);
         
@@ -151,7 +154,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(mini);
         
         auto miniText = CCLabelBMFont::create("Mini", "goldFont.fnt");
-        miniText->setPosition(ccp(75, 202.5));
+        miniText->setPosition(ccp(-210, 42.5));
         miniText->setScale(0.6);
         layer->addChild(miniText);
         
@@ -163,7 +166,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->addChild(flip);
         
         auto flipText = CCLabelBMFont::create("Flip", "goldFont.fnt");
-        flipText->setPosition(ccp(75, 242.5));
+        flipText->setPosition(ccp(-210, 82.5));
         flipText->setScale(0.6);
         layer->addChild(flipText);
         
