@@ -5,8 +5,8 @@ using namespace geode::prelude;
 class $modify(CleanStartpos, LevelSettingsLayer) {
 
     void setProperty(CCObject* sender) {
-        auto settings = static_cast<LevelSettingsObject*>(static_cast<CCMenu*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject());
-        auto state = !static_cast<CCMenuItemToggler*>(sender)->isToggled();
+        auto settings = typeinfo_cast<LevelSettingsObject*>(typeinfo_cast<CCMenu*>(typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject());
+        auto state = !typeinfo_cast<CCMenuItemToggler*>(sender)->isToggled();
         switch(sender->getTag()) {
             case 100:
                 settings->m_reverseGameplay = state;
@@ -30,56 +30,56 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     }
 
     void setMode(CCObject* sender) {
-        static_cast<LevelSettingsObject*>(static_cast<CCMenu*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject())->m_startMode = sender->getTag() - 200;
+        typeinfo_cast<LevelSettingsObject*>(typeinfo_cast<CCMenu*>(typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject())->m_startMode = sender->getTag() - 200;
         for(int i = 200; i < 208; i++) {
-            static_cast<CCMenuItemSpriteExtra*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
+            typeinfo_cast<CCMenuItemSpriteExtra*>(typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
         }
-        static_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
+        typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
     }
 
     void setSpeed(CCObject* sender) {
-		static_cast<LevelSettingsObject*>(static_cast<CCMenu*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject())->m_startSpeed = static_cast<Speed>(sender->getTag() - 300);
+		typeinfo_cast<LevelSettingsObject*>(typeinfo_cast<CCMenu*>(typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject())->m_startSpeed = typeinfo_cast<Speed>(sender->getTag() - 300);
         for(int i = 300; i < 305; i++) {
-            static_cast<CCMenuItemSpriteExtra*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
+            typeinfo_cast<CCMenuItemSpriteExtra*>(typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildByTag(i))->setColor({125, 125, 125});
         }
-        static_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
+        typeinfo_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
     }
 	
     $override
     bool init(LevelSettingsObject* p0, LevelEditorLayer* p1) {
         if(!LevelSettingsLayer::init(p0, p1)) return false;
 
-        auto layer = static_cast<CCLayer*>(this->getChildren()->objectAtIndex(0));
+        auto layer = typeinfo_cast<CCLayer*>(this->getChildren()->objectAtIndex(0));
 
         if(layer->getChildrenCount() > 13) return true;
 
-        auto menu = static_cast<CCMenu*>(layer->getChildren()->objectAtIndex(1));
+        auto menu = typeinfo_cast<CCMenu*>(layer->getChildren()->objectAtIndex(1));
         menu->setUserObject(p0);
 
         layer->setPosition(CCDirector::sharedDirector()->getWinSize() / 2);
         menu->setPosition(ccp(0, 0));
 
         // Menu bg
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(0))->setContentSize(ccp(500, 190));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(0))->setPosition(ccp(0, 0));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(0))->setContentSize(ccp(500, 190));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(0))->setPosition(ccp(0, 0));
         // OK
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(0))->setPositionY(-60);
+        typeinfo_cast<CCNode*>(menu->getChildren()->objectAtIndex(0))->setPositionY(-60);
         // Target Order
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(4))->setPosition(ccp(-100, -30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setPosition(ccp(-100, -60));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setContentSize(ccp(80, 30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(6))->setPosition(ccp(-100, -60));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(4))->setPosition(ccp(-100, -30));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setPosition(ccp(-100, -60));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setContentSize(ccp(80, 30));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(6))->setPosition(ccp(-100, -60));
         // Target Channel
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(7))->setPosition(ccp(100, -30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setPosition(ccp(100, -60));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setContentSize(ccp(80, 30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPosition(ccp(100, -60));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(7))->setPosition(ccp(100, -30));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setPosition(ccp(100, -60));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setContentSize(ccp(80, 30));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPosition(ccp(100, -60));
         // Disable
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(1))->setPosition(ccp(210, -60));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -37.5));
+        typeinfo_cast<CCNode*>(menu->getChildren()->objectAtIndex(1))->setPosition(ccp(210, -60));
+        typeinfo_cast<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -37.5));
         // Reset Camera
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -20));
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setScale(1.143);
+        typeinfo_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -20));
+        typeinfo_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setScale(1.143);
 		auto resetText = CCLabelBMFont::create("Rst Cam", "goldFont.fnt");
         resetText->setPosition(ccp(210, 2.5));
         resetText->setScale(0.6);
