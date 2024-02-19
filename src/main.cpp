@@ -4,10 +4,6 @@ using namespace geode::prelude;
 
 class $modify(CleanStartpos, LevelSettingsLayer) {
 
-    static void onModify(auto& self) {
-        self.setHookPriority("CleanStartpos::init", 999);
-    }
-
     void setProperty(CCObject* sender) {
         auto settings = as<LevelSettingsObject*>(as<CCMenu*>(as<CCMenuItemSpriteExtra*>(sender)->getParent())->getUserObject());
         auto state = !as<CCMenuItemToggler*>(sender)->isToggled();
