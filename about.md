@@ -2,4 +2,4 @@
 
 Puts all the Startpos options on one page
 
-![Example](blueblock6.cleanstartpos/example.png)
+![](blueblock6.cleanstartpos/example.png)
