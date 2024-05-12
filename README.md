@@ -2,4 +2,4 @@
 
 Puts all the Startpos options on one page
 
-![example](https://github.com/blueblock6/CleanStartpos/blob/b98cbb9a64e519fe7c746e9e9eb2862deed0b2f0/resources/example.pngresources/example.png)
+![example](https://raw.githubusercontent.com/blueblock6/CleanStartpos/c46e2df4bc5ac07dbfc88c348d92fb08ba951ed0/resources/example.png)
