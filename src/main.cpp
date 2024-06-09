@@ -5,6 +5,25 @@ using namespace geode::prelude;
 
 LevelSettingsObject* settings;
 
+#define addButton(sprite, tag, callback, condition)\
+    btnSpr = CCSprite::createWithSpriteFrameName(sprite);\
+    btn = CCMenuItemSpriteExtra::create(btnSpr, menu, menu_selector(callback));\
+    btn->setTag(tag);\
+    if(condition != tag) btn->setColor({127, 127, 127});\
+    menu->addChild(btn);
+
+#define addProperty(name, tag, condition)\
+    label = CCLabelBMFont::create(name, "goldFont.fnt");\
+    label->limitLabelWidth(75, 0.7f, 0.1f);\
+    label->setPositionY(start);\
+    menu->addChild(label);\
+    toggle = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::toggleProperty));\
+    toggle->setTag(tag);\
+    toggle->toggle(condition);\
+    toggle->setPositionY(start - 22);\
+    menu->addChild(toggle);\
+    start -= 40;
+
 class $modify(CleanStartpos, LevelSettingsLayer) {
     $override
     bool init(LevelSettingsObject* p0, LevelEditorLayer* p1) {
@@ -13,230 +32,108 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         if(p1 != nullptr) return true;
 
         settings = p0;
-        auto layer = static_cast<CCLayer*>(this->getChildren()->objectAtIndex(0));
-        auto menu = static_cast<CCMenu*>(layer->getChildren()->objectAtIndex(1));
-
         auto center = CCDirector::sharedDirector()->getWinSize() / 2;
 
-        // Menu BG
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(0))->setContentSize(ccp(500, 190));
-        // OK
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(0))->setPositionY(-65);
-        // Target Order
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(4))->setPosition(center + ccp(-100, -35));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setPosition(center + ccp(-100, -65));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(5))->setContentSize(ccp(80, 30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(6))->setPosition(center + ccp(-100, -65));
-        // Target Channel
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(7))->setPosition(center + ccp(100, -35));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setPosition(center + ccp(100, -65));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(8))->setContentSize(ccp(80, 30));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(9))->setPosition(center + ccp(100, -65));
-        // Disable
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(1))->setPosition(ccp(210, -60));
-        static_cast<CCNode*>(layer->getChildren()->objectAtIndex(2))->setPosition(center + ccp(210, -37.5f));
-        // Reset Camera
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setPosition(ccp(210, -20));
-        static_cast<CCNode*>(menu->getChildren()->objectAtIndex(2))->setScale(1.143f);
-		auto resetText = CCLabelBMFont::create("Reset Camera", "goldFont.fnt");
-        resetText->setPosition(center + ccp(210, 2.5f));
-        resetText->setScale(0.4f);
-        layer->addChild(resetText);
+        // Move Stuff
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(0))->setContentSize({450, 190}); // BG
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(0))->setPositionY(-60); // OK
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(4))->setPositionX(center.width - 80); // Target Order Label
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(5))->setPositionX(center.width - 80); // Target Order BG
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(5))->setContentWidth(80); // Target Order BG
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(6))->setPositionX(center.width - 80); // Target Order Input
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(7))->setPositionX(center.width + 80); // Target Channel Label
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(8))->setPositionX(center.width + 80); // Target Channel BG
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(8))->setContentWidth(80); // Target Channel BG
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(9))->setPositionX(center.width + 80); // Target Channel Input
 
-		// Remove unused elements
-        layer->getChildren()->removeObjectAtIndex(12);
-        layer->getChildren()->removeObjectAtIndex(11);
-        layer->getChildren()->removeObjectAtIndex(10);
-        layer->getChildren()->removeObjectAtIndex(3);
-        menu->getChildren()->removeObjectAtIndex(5);
-        menu->getChildren()->removeObjectAtIndex(4);
-        menu->getChildren()->removeObjectAtIndex(3);
-        
+        // Hide Stuff
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(2))->setVisible(false); // Disable Label
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(1))->setVisible(false); // Disable Toggle
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(3))->setVisible(false); // Reset Camera Label
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(2))->setVisible(false); // Reset Camera Toggle
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(10))->setVisible(false); // Speed Label
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(3))->setVisible(false); // Speed Button
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(11))->setVisible(false); // Mode Label
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(4))->setVisible(false); // Mode Button
+        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(12))->setVisible(false); // Options Label
+        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(5))->setVisible(false); // Options Button
+
+        CCSprite* btnSpr;
+        CCMenuItemSpriteExtra* btn;
+        CCMenu* menu;
+        CCLabelBMFont* label;
+        float start;
         auto checkOn = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
+        checkOn->setScale(0.8f);
         auto checkOff = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
+        checkOff->setScale(0.8f);
+        CCMenuItemToggler* toggle;
 
-        // Properties
-        auto reverse = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        reverse->setPosition(ccp(210, 20));
-        reverse->setScale(0.8f);
-        reverse->setTag(100);
-        reverse->toggle(p0->m_reverseGameplay);
-        menu->addChild(reverse);
+        menu = CCMenu::create();
+        menu->setID("select-mode-menu"_spr);
+        menu->setContentWidth(300.f);
+        menu->setLayout(RowLayout::create());
+
+        addButton("gj_iconBtn_off_001.png", 0, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_shipBtn_off_001.png", 1, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_ballBtn_off_001.png", 2, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_birdBtn_off_001.png", 3, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_dartBtn_off_001.png", 4, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_robotBtn_off_001.png", 5, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_spiderBtn_off_001.png", 6, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_swingBtn_off_001.png", 7, CleanStartpos::onMode, p0->m_startMode);
+
+        menu->updateLayout(false);
+        menu->setPosition(center + ccp(0, 70));
+        m_mainLayer->addChild(menu);
+
+        menu = CCMenu::create();
+        menu->setID("select-speed-menu"_spr);
+        menu->setContentWidth(300.f);
+        menu->setLayout(RowLayout::create());
+
+        addButton("boost_01_001.png", 1, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_02_001.png", 0, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_03_001.png", 2, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_04_001.png", 3, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_05_001.png", 4, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+
+        menu->updateLayout(false);
+        menu->setPosition(center + ccp(0, 10));
+        m_mainLayer->addChild(menu);
+
+        menu = CCMenu::create();
+        menu->setID("left-properties-menu"_spr);
+        menu->setContentSize({75, 160});
+        start = 80;
+
+        addProperty("Flip", 100, p0->m_isFlipped);
+        addProperty("Mini", 101, p0->m_startMini);
+        addProperty("Dual", 102, p0->m_startDual);
+        addProperty("Mirror", 103, p0->m_mirrorMode);
+
+        menu->setPosition(center + ccp(-180, 0));
+        m_mainLayer->addChild(menu);
+
+        menu = CCMenu::create();
+        menu->setID("left-properties-menu"_spr);
+        menu->setContentSize({75, 160});
+        start = 80;
         
-        auto reverseText = CCLabelBMFont::create("Reverse", "goldFont.fnt");
-        reverseText->setPosition(center + ccp(210, 42.5f));
-        reverseText->setScale(0.6f);
-        layer->addChild(reverseText);
-        
-        auto rotate = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        rotate->setPosition(ccp(210, 60));
-        rotate->setScale(0.8f);
-        rotate->setTag(101);
-        rotate->toggle(p0->m_rotateGameplay);
-        menu->addChild(rotate);
-        
-        auto rotateText = CCLabelBMFont::create("Rotate", "goldFont.fnt");
-        rotateText->setPosition(center + ccp(210, 82.5f));
-        rotateText->setScale(0.6f);
-        layer->addChild(rotateText);
-        
-        auto mirror = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        mirror->setPosition(ccp(-210, -60));
-        mirror->setScale(0.8f);
-        mirror->setTag(102);
-        mirror->toggle(p0->m_mirrorMode);
-        menu->addChild(mirror);
-        
-        auto mirrorText = CCLabelBMFont::create("Mirror", "goldFont.fnt");
-        mirrorText->setPosition(center + ccp(-210, -37.5f));
-        mirrorText->setScale(0.6f);
-        layer->addChild(mirrorText);
-        
-        auto dual = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        dual->setPosition(ccp(-210, -20));
-        dual->setScale(0.8f);
-        dual->setTag(103);
-        dual->toggle(p0->m_startDual);
-        menu->addChild(dual);
-        
-        auto dualText = CCLabelBMFont::create("Dual", "goldFont.fnt");
-        dualText->setPosition(center + ccp(-210, 2.5f));
-        dualText->setScale(0.6f);
-        layer->addChild(dualText);
-        
-        auto mini = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        mini->setPosition(ccp(-210, 20));
-        mini->setScale(0.8f);
-        mini->setTag(104);
-        mini->toggle(p0->m_startMini);
-        menu->addChild(mini);
-        
-        auto miniText = CCLabelBMFont::create("Mini", "goldFont.fnt");
-        miniText->setPosition(center + ccp(-210, 42.5f));
-        miniText->setScale(0.6f);
-        layer->addChild(miniText);
-        
-        auto flip = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::setProperty));
-        flip->setPosition(ccp(-210, 60));
-        flip->setScale(0.8f);
-        flip->setTag(105);
-        flip->toggle(p0->m_isFlipped);
-        menu->addChild(flip);
-        
-        auto flipText = CCLabelBMFont::create("Flip", "goldFont.fnt");
-        flipText->setPosition(center + ccp(-210, 82.5f));
-        flipText->setScale(0.6f);
-        layer->addChild(flipText);
+        addProperty("Rotate", 104, p0->m_rotateGameplay);
+        addProperty("Reverse", 105, p0->m_reverseGameplay);
+        addProperty("Reset Camera", 106, p0->m_resetCamera);
+        addProperty("Disable", 107, p0->m_disableStartPos);
 
-        // Gamemodes
-        auto gamemodes = CCMenu::create();
-        gamemodes->setTouchPriority(-510);
-        gamemodes->setPositionY(center.height + 65);
-        gamemodes->setContentSize(ccp(300, 33.5f));
-        gamemodes->setLayout(RowLayout::create());
+        menu->setPosition(center + ccp(180, 0));
+        m_mainLayer->addChild(menu);
 
-        auto icon = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_iconBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        icon->setTag(0);
-        gamemodes->addChild(icon);
-
-        auto ship = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_shipBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        ship->setTag(1);
-        gamemodes->addChild(ship);
-
-        auto ball = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_ballBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        ball->setTag(2);
-        gamemodes->addChild(ball);
-
-        auto bird = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_birdBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        bird->setTag(3);
-        gamemodes->addChild(bird);
-
-        auto dart = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_dartBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        dart->setTag(4);
-        gamemodes->addChild(dart);
-
-        auto robot = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_robotBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        robot->setTag(5);
-        gamemodes->addChild(robot);
-
-        auto spider = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_spiderBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        spider->setTag(6);
-        gamemodes->addChild(spider);
-
-        auto swing = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_swingBtn_off_001.png"), this, menu_selector(CleanStartpos::setMode));
-        swing->setTag(7);
-        gamemodes->addChild(swing);
-
-        CCObject* child;
-        CCARRAY_FOREACH(gamemodes->getChildren(), child) {
-            if(p0->m_startMode != child->getTag()) static_cast<CCMenuItemSpriteExtra*>(child)->setColor({125, 125, 125});
-        }
-
-        gamemodes->updateLayout();
-        layer->addChild(gamemodes);
-        
-        // Speeds
-        auto speeds = CCMenu::create();
-        speeds->setTouchPriority(-512);
-        speeds->setPositionY(center.height + 6);
-        speeds->setContentSize(ccp(400, 200));
-        speeds->setLayout(RowLayout::create());
-
-        auto slowSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_01_001.png"), this, menu_selector(CleanStartpos::setSpeed));
-        slowSpeed->setTag(1);
-        speeds->addChild(slowSpeed);
-
-        auto normalSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_02_001.png"), this, menu_selector(CleanStartpos::setSpeed));
-        normalSpeed->setTag(0);
-        speeds->addChild(normalSpeed);
-
-        auto doubleSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_03_001.png"), this, menu_selector(CleanStartpos::setSpeed));
-        doubleSpeed->setTag(2);
-        speeds->addChild(doubleSpeed);
-
-        auto tripleSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_04_001.png"), this, menu_selector(CleanStartpos::setSpeed));
-        tripleSpeed->setTag(3);
-        speeds->addChild(tripleSpeed);
-
-        auto quadSpeed = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("boost_05_001.png"), this, menu_selector(CleanStartpos::setSpeed));
-        quadSpeed->setTag(4);
-        speeds->addChild(quadSpeed);
-
-        CCARRAY_FOREACH(speeds->getChildren(), child) {
-            if(static_cast<int>(p0->m_startSpeed) != child->getTag()) static_cast<CCMenuItemSpriteExtra*>(child)->setColor({125, 125, 125});
-        }
-        
-        speeds->updateLayout();
-        layer->addChild(speeds);
+        handleTouchPriority(this);
 
         return true;
     }
 
-    void setProperty(CCObject* sender) {
-        auto state = !static_cast<CCMenuItemToggler*>(sender)->isToggled();
-        switch(sender->getTag()) {
-            case 100:
-                settings->m_reverseGameplay = state;
-                break;
-            case 101:
-                settings->m_rotateGameplay = state;
-                break;
-            case 102:
-                settings->m_mirrorMode = state;
-                break;
-            case 103:
-                settings->m_startDual = state;
-                break;
-            case 104:
-                settings->m_startMini = state;
-                break;
-            case 105:
-                settings->m_isFlipped = state;
-                break;
-        }
-    }
-
-    void setMode(CCObject* sender) {
+    void onMode(CCObject* sender) {
         settings->m_startMode = sender->getTag();
         CCObject* child;
         CCARRAY_FOREACH(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildren(), child) {
@@ -245,12 +142,41 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         static_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
     }
 
-    void setSpeed(CCObject* sender) {
+    void onSpeed(CCObject* sender) {
 		settings->m_startSpeed = static_cast<Speed>(sender->getTag());
         CCObject* child;
         CCARRAY_FOREACH(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildren(), child) {
             static_cast<CCMenuItemSpriteExtra*>(child)->setColor({125, 125, 125});
         }
         static_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
+    }
+
+    void toggleProperty(CCObject* sender) {
+        auto state = !static_cast<CCMenuItemToggler*>(sender)->isToggled();
+        switch(sender->getTag()) {
+            case 100:
+                settings->m_isFlipped = state;
+                break;
+            case 101:
+                settings->m_startMini = state;
+                break;
+            case 102:
+                settings->m_startDual = state;
+                break;
+            case 103:
+                settings->m_mirrorMode = state;
+                break;
+            case 104:
+                settings->m_rotateGameplay = state;
+                break;
+            case 105:
+                settings->m_reverseGameplay = state;
+                break;
+            case 106:
+                settings->m_resetCamera = state;
+                break;
+            case 107:
+                settings->m_disableStartPos = state;
+        }
     }
 };
