@@ -74,14 +74,14 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->setContentWidth(300.f);
         menu->setLayout(RowLayout::create());
 
-        addButton("gj_iconBtn_off_001.png", 0, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_shipBtn_off_001.png", 1, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_ballBtn_off_001.png", 2, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_birdBtn_off_001.png", 3, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_dartBtn_off_001.png", 4, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_robotBtn_off_001.png", 5, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_spiderBtn_off_001.png", 6, CleanStartpos::onMode, p0->m_startMode);
-        addButton("gj_swingBtn_off_001.png", 7, CleanStartpos::onMode, p0->m_startMode);
+        addButton("gj_iconBtn_off_001.png", 0, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_shipBtn_off_001.png", 1, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_ballBtn_off_001.png", 2, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_birdBtn_off_001.png", 3, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_dartBtn_off_001.png", 4, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_robotBtn_off_001.png", 5, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_spiderBtn_off_001.png", 6, CleanStartpos::onCMode, p0->m_startMode);
+        addButton("gj_swingBtn_off_001.png", 7, CleanStartpos::onCMode, p0->m_startMode);
 
         menu->updateLayout(false);
         menu->setPosition(center + ccp(0, 70));
@@ -92,11 +92,11 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->setContentWidth(300.f);
         menu->setLayout(RowLayout::create());
 
-        addButton("boost_01_001.png", 1, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
-        addButton("boost_02_001.png", 0, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
-        addButton("boost_03_001.png", 2, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
-        addButton("boost_04_001.png", 3, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
-        addButton("boost_05_001.png", 4, CleanStartpos::onSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_01_001.png", 1, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_02_001.png", 0, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_03_001.png", 2, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_04_001.png", 3, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed));
+        addButton("boost_05_001.png", 4, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed));
 
         menu->updateLayout(false);
         menu->setPosition(center + ccp(0, 10));
@@ -133,7 +133,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         return true;
     }
 
-    void onMode(CCObject* sender) {
+    void onCMode(CCObject* sender) {
         settings->m_startMode = sender->getTag();
         CCObject* child;
         CCARRAY_FOREACH(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildren(), child) {
@@ -142,7 +142,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         static_cast<CCMenuItemSpriteExtra*>(sender)->setColor({255, 255, 255});
     }
 
-    void onSpeed(CCObject* sender) {
+    void onCSpeed(CCObject* sender) {
 		settings->m_startSpeed = static_cast<Speed>(sender->getTag());
         CCObject* child;
         CCARRAY_FOREACH(static_cast<CCMenuItemSpriteExtra*>(sender)->getParent()->getChildren(), child) {
