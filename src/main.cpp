@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/LevelSettingsLayer.hpp>
+#include <Geode/modify/GJBaseGameLayer.hpp>
 
 using namespace geode::prelude;
 
@@ -178,5 +179,16 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
             case 107:
                 settings->m_disableStartPos = state;
         }
+    }
+};
+
+class $modify(GJBaseGameLayer) {
+    $override
+    void loadStartPosObject() {
+        GJBaseGameLayer::loadStartPosObject();
+        Loader::get()->queueInMainThread([this] {
+            if(!PlayLayer::get()) return;
+            toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, false);
+        });
     }
 };
