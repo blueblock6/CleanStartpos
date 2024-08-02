@@ -1,3 +1,8 @@
+# 1.2.5
+
+- Make startpos mirror instant
+- Hopefully fix crash
+
 # 1.2.4
 
 - Fix mirror toggle
