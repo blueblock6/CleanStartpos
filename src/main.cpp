@@ -1,28 +1,28 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/LevelSettingsLayer.hpp>
-#include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 
 using namespace geode::prelude;
 
 LevelSettingsObject* settings;
 
-#define addButton(sprite, tag, callback, condition)\
-    btnSpr = CCSprite::createWithSpriteFrameName(sprite);\
-    btn = CCMenuItemSpriteExtra::create(btnSpr, menu, menu_selector(callback));\
-    btn->setTag(tag);\
-    if(condition != tag) btn->setColor({127, 127, 127});\
+#define addButton(sprite, tag, callback, condition)                             \
+    btnSpr = CCSprite::createWithSpriteFrameName(sprite);                       \
+    btn = CCMenuItemSpriteExtra::create(btnSpr, menu, menu_selector(callback)); \
+    btn->setTag(tag);                                                           \
+    if(condition != tag) btn->setColor({127, 127, 127});                      \
     menu->addChild(btn);
 
-#define addProperty(name, tag, condition)\
-    label = CCLabelBMFont::create(name, "goldFont.fnt");\
-    label->limitLabelWidth(75, 0.7f, 0.1f);\
-    label->setPositionY(start);\
-    menu->addChild(label);\
-    toggle = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::toggleProperty));\
-    toggle->setTag(tag);\
-    toggle->toggle(condition);\
-    toggle->setPositionY(start - 22);\
-    menu->addChild(toggle);\
+#define addProperty(name, tag, condition)                                                                       \
+    label = CCLabelBMFont::create(name, "goldFont.fnt");                                                        \
+    label->limitLabelWidth(75, 0.7f, 0.1f);                                                                     \
+    label->setPositionY(start);                                                                                 \
+    menu->addChild(label);                                                                                      \
+    toggle = CCMenuItemToggler::create(checkOn, checkOff, menu, menu_selector(CleanStartpos::toggleProperty));  \
+    toggle->setTag(tag);                                                                                        \
+    toggle->toggle(condition);                                                                                  \
+    toggle->setPositionY(start - 22);                                                                           \
+    menu->addChild(toggle);                                                                                     \
     start -= 40;
 
 class $modify(CleanStartpos, LevelSettingsLayer) {
@@ -182,13 +182,11 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     }
 };
 
-class $modify(GJBaseGameLayer) {
+class $modify(PlayLayer) {
     $override
-    void loadStartPosObject() {
-        GJBaseGameLayer::loadStartPosObject();
-        Loader::get()->queueInMainThread([this] {
-            if(!PlayLayer::get()) return;
-            toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, false);
-        });
+    void resetLevel() {
+        PlayLayer::resetLevel();
+        if(!m_startPosObject) return;
+        toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, true);
     }
 };
