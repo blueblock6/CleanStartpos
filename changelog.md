@@ -1,3 +1,7 @@
+# 1.2.6-alpha.1
+
+- 2.2074 and Geode 4.0.0-alpha.1 Support
+
 # 1.2.5
 
 - Make startpos mirror instant
@@ -9,7 +13,7 @@
 
 # 1.2.3
 
-- Beta / Release Support
+- Geode 3.0.0 Support
 
 # 1.2.2
 
@@ -17,12 +21,12 @@
 
 # 1.2.1
 
-- Alpha 2 Support
+- Geode 3.0.0-alpha.2 Support
 
 # 1.2.0
 
 - Refactor
-- 2.206 Alpha 1 Support
+- 2.206 and Geode 3.0.0-alpha.1 Support
 
 # 1.1.0
 

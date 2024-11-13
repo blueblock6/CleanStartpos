@@ -6,14 +6,13 @@ using namespace geode::prelude;
 
 LevelSettingsObject* settings;
 
-#define addButton(sprite, tag, callback, condition)                             \
-    btnSpr = CCSprite::createWithSpriteFrameName(sprite);                       \
-    btn = CCMenuItemSpriteExtra::create(btnSpr, menu, menu_selector(callback)); \
-    btn->setTag(tag);                                                           \
-    if(condition != tag) btn->setColor({127, 127, 127});                      \
+#define addButton(sprite, tag, callback, condition)                                                                     \
+    btn = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName(sprite), menu, menu_selector(callback));    \
+    btn->setTag(tag);                                                                                                   \
+    if(condition != tag) btn->setColor({127, 127, 127});                                                              \
     menu->addChild(btn);
 
-#define addProperty(name, tag, condition)                                                                       \
+#define addToggle(name, tag, condition)                                                                         \
     label = CCLabelBMFont::create(name, "goldFont.fnt");                                                        \
     label->limitLabelWidth(75, 0.7f, 0.1f);                                                                     \
     label->setPositionY(start);                                                                                 \
@@ -36,41 +35,31 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         auto center = CCDirector::sharedDirector()->getWinSize() / 2;
 
         // Move Stuff
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(0))->setContentSize({450, 190}); // BG
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(0))->setPositionY(-60); // OK
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(4))->setPositionX(center.width - 80); // Target Order Label
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(5))->setPositionX(center.width - 80); // Target Order BG
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(5))->setContentWidth(80); // Target Order BG
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(6))->setPositionX(center.width - 80); // Target Order Input
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(7))->setPositionX(center.width + 80); // Target Channel Label
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(8))->setPositionX(center.width + 80); // Target Channel BG
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(8))->setContentWidth(80); // Target Channel BG
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(9))->setPositionX(center.width + 80); // Target Channel Input
+        m_mainLayer->getChildByType(0)->setContentSize({450, 190}); // BG
+        m_buttonMenu->getChildByType(0)->setPositionY(-60); // OK
+        m_mainLayer->getChildByType(4)->setPositionX(center.width - 80); // Target Order Label
+        m_mainLayer->getChildByType(5)->setPositionX(center.width - 80); // Target Order BG
+        m_mainLayer->getChildByType(5)->setContentWidth(80); // Target Order BG
+        m_mainLayer->getChildByType(6)->setPositionX(center.width - 80); // Target Order Input
+        m_mainLayer->getChildByType(7)->setPositionX(center.width + 80); // Target Channel Label
+        m_mainLayer->getChildByType(8)->setPositionX(center.width + 80); // Target Channel BG
+        m_mainLayer->getChildByType(8)->setContentWidth(80); // Target Channel BG
+        m_mainLayer->getChildByType(9)->setPositionX(center.width + 80); // Target Channel Input
 
         // Hide Stuff
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(2))->setVisible(false); // Disable Label
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(1))->setVisible(false); // Disable Toggle
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(3))->setVisible(false); // Reset Camera Label
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(2))->setVisible(false); // Reset Camera Toggle
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(10))->setVisible(false); // Speed Label
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(3))->setVisible(false); // Speed Button
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(11))->setVisible(false); // Mode Label
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(4))->setVisible(false); // Mode Button
-        static_cast<CCNode*>(m_mainLayer->getChildren()->objectAtIndex(12))->setVisible(false); // Options Label
-        static_cast<CCNode*>(m_buttonMenu->getChildren()->objectAtIndex(5))->setVisible(false); // Options Button
+        m_mainLayer->getChildByType(2)->setVisible(false); // Disable Label
+        m_buttonMenu->getChildByType(1)->setVisible(false); // Disable Toggle
+        m_mainLayer->getChildByType(3)->setVisible(false); // Reset Camera Label
+        m_buttonMenu->getChildByType(2)->setVisible(false); // Reset Camera Toggle
+        m_mainLayer->getChildByType(10)->setVisible(false); // Speed Label
+        m_buttonMenu->getChildByType(3)->setVisible(false); // Speed Button
+        m_mainLayer->getChildByType(11)->setVisible(false); // Mode Label
+        m_buttonMenu->getChildByType(4)->setVisible(false); // Mode Button
+        m_mainLayer->getChildByType(12)->setVisible(false); // Options Label
+        m_buttonMenu->getChildByType(5)->setVisible(false); // Options Button
 
-        CCSprite* btnSpr;
         CCMenuItemSpriteExtra* btn;
-        CCMenu* menu;
-        CCLabelBMFont* label;
-        float start;
-        auto checkOn = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
-        checkOn->setScale(0.8f);
-        auto checkOff = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
-        checkOff->setScale(0.8f);
-        CCMenuItemToggler* toggle;
-
-        menu = CCMenu::create();
+        auto menu = CCMenu::create();
         menu->setID("select-mode-menu"_spr);
         menu->setContentWidth(300.f);
         menu->setLayout(RowLayout::create());
@@ -87,7 +76,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->updateLayout(false);
         menu->setPosition(center + ccp(0, 70));
         m_mainLayer->addChild(menu);
-
+        
         menu = CCMenu::create();
         menu->setID("select-speed-menu"_spr);
         menu->setContentWidth(300.f);
@@ -103,15 +92,22 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->setPosition(center + ccp(0, 10));
         m_mainLayer->addChild(menu);
 
+        CCLabelBMFont* label;
+        float start = 80;
+        auto checkOn = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
+        checkOn->setScale(0.8f);
+        auto checkOff = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
+        checkOff->setScale(0.8f);
+        CCMenuItemToggler* toggle;
+
         menu = CCMenu::create();
         menu->setID("left-properties-menu"_spr);
         menu->setContentSize({75, 160});
-        start = 80;
 
-        addProperty("Flip", 100, p0->m_isFlipped);
-        addProperty("Mini", 101, p0->m_startMini);
-        addProperty("Dual", 102, p0->m_startDual);
-        addProperty("Mirror", 103, p0->m_mirrorMode);
+        addToggle("Flip", 100, p0->m_isFlipped);
+        addToggle("Mini", 101, p0->m_startMini);
+        addToggle("Dual", 102, p0->m_startDual);
+        addToggle("Mirror", 103, p0->m_mirrorMode);
 
         menu->setPosition(center + ccp(-180, 0));
         m_mainLayer->addChild(menu);
@@ -121,10 +117,10 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         menu->setContentSize({75, 160});
         start = 80;
         
-        addProperty("Rotate", 104, p0->m_rotateGameplay);
-        addProperty("Reverse", 105, p0->m_reverseGameplay);
-        addProperty("Reset Camera", 106, p0->m_resetCamera);
-        addProperty("Disable", 107, p0->m_disableStartPos);
+        addToggle("Rotate", 104, p0->m_rotateGameplay);
+        addToggle("Reverse", 105, p0->m_reverseGameplay);
+        addToggle("Reset Camera", 106, p0->m_resetCamera);
+        addToggle("Disable", 107, p0->m_disableStartPos);
 
         menu->setPosition(center + ccp(180, 0));
         m_mainLayer->addChild(menu);
@@ -187,6 +183,6 @@ class $modify(PlayLayer) {
     void resetLevel() {
         PlayLayer::resetLevel();
         if(!m_startPosObject) return;
-        toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, true);
+        if(m_startPosObject->m_startSettings->m_mirrorMode) toggleFlipped(true, true);
     }
 };
