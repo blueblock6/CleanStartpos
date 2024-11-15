@@ -1,11 +1,11 @@
 {
-	"geode": "4.0.0-alpha.1",
+	"geode": "4.0.0-beta.1",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
 		"mac": "2.2074"
 	},
-	"version": "v1.2.6-alpha.1",
+	"version": "v1.2.6",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean Startpos",
 	"developer": "BlueBlock6",

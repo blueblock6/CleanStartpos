@@ -1,3 +1,7 @@
+# 1.2.6
+
+- Geode 4.0.0 Support
+
 # 1.2.6-alpha.1
 
 - 2.2074 and Geode 4.0.0-alpha.1 Support
