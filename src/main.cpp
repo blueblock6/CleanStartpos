@@ -4,6 +4,7 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/DrawGridLayer.hpp>
+#include <Geode/modify/LevelEditorLayer.hpp>
 
 using namespace geode::prelude;
 
@@ -13,7 +14,7 @@ using namespace geode::prelude;
         this, menu_selector(callback));                                                                                 \
     btn->setTag(tag);                                                                                                   \
     btn->setEnabled(!disable);                                                                                          \
-    if(condition != tag) btn->setColor(ccColor3B(127, 127, 127));                                                       \
+    if(condition != tag) btn->setColor({127, 127, 127});                                                       \
     menu->addChild(btn);
 
 #define ADD_TOGGLE(name, tag, condition, disable)                                                                           \
@@ -486,7 +487,6 @@ class $modify(DrawGridLayer) {
     }
 };
 
-#include <Geode/modify/LevelEditorLayer.hpp>
 class $modify(LevelEditorLayer) {
     $override
     CCArray* createObjectsFromString(const gd::string& p0, bool p1, bool p2) {
@@ -518,13 +518,12 @@ class $modify(LevelEditorLayer) {
         }
 
         if(startPoses.empty()) return ret;
-        size_t start = 0;
-        size_t end;
+        std::stringstream ss(p0);
+        std::string token;
         size_t i = 0;
-        while((end = p0.find(';', start)) != std::string::npos) {
-            if(startPoses.contains(i)) startPoses[i]->loadSettingsFromString(p0.substr(start, end - start));
+        while(std::getline(ss, token, ';')) {
+            if(startPoses.contains(i)) startPoses[i]->loadSettingsFromString(token);
             ++i;
-            start = end + 1;
         }
 
         return ret;
