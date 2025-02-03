@@ -1,3 +1,10 @@
+# 1.3.0
+
+- Added dual StartPos linking
+- Added border offset input
+- Added free mode toggle
+- Fix copying start positions not retaining settings
+
 # 1.2.6
 
 - Geode 4.0.0 Support
@@ -8,8 +15,8 @@
 
 # 1.2.5
 
-- Make startpos mirror instant
-- Hopefully fix crash
+- Make mirror instant
+- Fix crash
 
 # 1.2.4
 
