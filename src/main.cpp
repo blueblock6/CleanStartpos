@@ -336,6 +336,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     }
 };
 
+TeleportPortalObject* tpObj = nullptr;
 class $modify(GJBaseGameLayer) {
     $override
     void loadStartPosObject() {
@@ -346,11 +347,13 @@ class $modify(GJBaseGameLayer) {
         m_startPosObject->m_startPosition -= ccp(0, m_startPosObject->m_controlID * 30);
         if(PlayLayer::get()) toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, true);
         if(m_startPosObject->m_isIceBlock) {
-            auto obj = TeleportPortalObject::create("", true);
-            obj->m_cameraIsFreeMode = true;
-            obj->m_cameraEasingValue = 10;
-            obj->m_cameraPaddingValue = .5f;
-            this->playerWillSwitchMode(m_player1, obj);
+            CC_SAFE_RELEASE(tpObj);
+            tpObj = TeleportPortalObject::create("", true);
+            tpObj->m_cameraIsFreeMode = true;
+            tpObj->m_cameraEasingValue = 10;
+            tpObj->m_cameraPaddingValue = .5f;
+            tpObj->retain();
+            this->playerWillSwitchMode(m_player1, tpObj);
         }
 
         if(!m_player2 || !links.contains(m_startPosObject->m_objectMaterial)) return;
