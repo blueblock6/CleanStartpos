@@ -1,21 +1,22 @@
 {
-	"geode": "4.0.0-beta.1",
+	"geode": "4.2.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
 		"mac": "2.2074"
 	},
-	"version": "v1.2.6",
+	"version": "v1.3.0",
 	"id": "blueblock6.cleanstartpos",
-	"name": "Clean Startpos",
+	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
-	"description": "Puts all the Startpos options on one page",
+	"description": "Puts all StartPos options on one page",
 	"links": {
 		"source": "https://github.com/blueblock6/CleanStartpos"
 	},
 	"tags": [
 		"editor",
+		"interface",
 		"enhancement",
-		"interface"
+        "bugfix"
 	]
 }
