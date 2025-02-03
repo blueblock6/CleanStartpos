@@ -57,9 +57,9 @@ LevelSettingsObject* loadFakeStartpos(GameObject* obj, StartPosObject* reference
 
 class $modify(CleanStartpos, LevelSettingsLayer) {
     struct Fields {
-        bool isP2;
-        CCMenuItemSpriteExtra* linkBtn;
-        TextInput* offsetInput;
+        bool isP2 = false;
+        CCMenuItemSpriteExtra* linkBtn = nullptr;
+        TextInput* offsetInput = nullptr;
     };
 
     $override
@@ -324,7 +324,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
 
     $override
     void onClose(CCObject* sender) {
-        if(!m_fields->isP2) {
+        if(!m_fields->isP2 && m_fields->linkBtn) {
             int value = 0;
             auto str = m_fields->offsetInput->getString();
             std::from_chars(str.data(), str.data() + str.size(), value);
