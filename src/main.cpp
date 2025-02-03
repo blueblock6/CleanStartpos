@@ -348,7 +348,7 @@ class $modify(GJBaseGameLayer) {
         if(PlayLayer::get()) toggleFlipped(m_startPosObject->m_startSettings->m_mirrorMode, true);
         if(m_startPosObject->m_isIceBlock) {
             CC_SAFE_RELEASE(tpObj);
-            tpObj = TeleportPortalObject::create("", true);
+            tpObj = TeleportPortalObject::create("edit_eGameRotBtn_001.png", true);
             tpObj->m_cameraIsFreeMode = true;
             tpObj->m_cameraEasingValue = 10;
             tpObj->m_cameraPaddingValue = .5f;
@@ -407,6 +407,7 @@ class $modify(GJBaseGameLayer) {
             if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].first = static_cast<StartPosObject*>(p0);
             else links[p0->m_objectMaterial] = {static_cast<StartPosObject*>(p0), nullptr};
         } else if(p0->m_objectID == 34 && p0->m_objectMaterial != 0) {
+            if(PlayLayer::get()) p0->m_isInvisible = true;
             maxLink = std::max(maxLink, p0->m_objectMaterial);
             if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].second = p0;
             else links[p0->m_objectMaterial] = {nullptr, p0};
