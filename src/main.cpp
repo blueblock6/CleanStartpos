@@ -14,7 +14,7 @@ using namespace geode::prelude;
         this, menu_selector(callback));                                                                                 \
     btn->setTag(tag);                                                                                                   \
     btn->setEnabled(!disable);                                                                                          \
-    if(condition != tag) btn->setColor({127, 127, 127});                                                       \
+    if(condition != tag) btn->setColor({127, 127, 127});                                                                \
     menu->addChild(btn);
 
 #define ADD_TOGGLE(name, tag, condition, disable)                                                                           \
@@ -66,7 +66,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     bool init(LevelSettingsObject* p0, LevelEditorLayer* p1) {
         if(!LevelSettingsLayer::init(p0, p1)) return false;
 
-        if(p1 != nullptr) return true;
+        if(p1) return true;
 
         m_fields->isP2 = m_settingsObject->getUserObject() != nullptr;
         auto center = CCDirector::sharedDirector()->getWinSize() / 2;
@@ -531,5 +531,23 @@ class $modify(LevelEditorLayer) {
         }
 
         return ret;
+    }
+
+    $override
+    void removeSpecial(GameObject* p0) {
+        LevelEditorLayer::removeSpecial(p0);
+        if(p0 && p0->m_objectID == 31 && links.contains(p0->m_objectMaterial)) geode::queueInMainThread([this, p0]{
+            auto link = links[p0->m_objectMaterial].second;
+            if(!link || m_undoObjects->count() == 0) return;
+            auto undo = static_cast<UndoObject*>(m_undoObjects->lastObject());
+            if(undo->m_command == UndoCommand::Delete) {
+                auto arr = CCArray::createWithObject(p0);
+                undo = UndoObject::createWithArray(CCArray::createWithObject(p0), UndoCommand::DeleteMulti);
+                m_undoObjects->replaceObjectAtIndex(m_undoObjects->count()-1, undo);
+            }
+            if(undo->m_command == UndoCommand::DeleteMulti) undo->m_objects->addObject(link);
+            else return;
+            this->removeObject(link, true);
+        });
     }
 };

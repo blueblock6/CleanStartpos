@@ -1,3 +1,7 @@
+# 1.3.2
+
+- Delete linked StartPos when base StartPos is deleted
+
 # 1.3.1
 
 - Fix level settings crash
