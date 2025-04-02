@@ -3,9 +3,10 @@
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
-		"mac": "2.2074"
+		"mac": "2.2074",
+        "ios": "2.2074"
 	},
-	"version": "v1.3.2",
+	"version": "v1.3.3",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
