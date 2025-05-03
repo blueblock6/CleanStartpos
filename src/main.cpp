@@ -327,13 +327,11 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     $override
     void onClose(CCObject* sender) {
         if(m_fields->linkBtn) {
-            float velocityValue = 0;
-            auto str = m_fields->velocityInput->getString();
-            std::from_chars(str.data(), str.data() + str.size(), velocityValue);
+            float velocityValue = std::stof(m_fields->velocityInput->getString());
             m_settingsObject->m_spawnGroup = *reinterpret_cast<int*>(&velocityValue);
             if(!m_fields->isP2) {
                 int offsetValue = 0;
-                str = m_fields->offsetInput->getString();
+                auto str = m_fields->offsetInput->getString();
                 std::from_chars(str.data(), str.data() + str.size(), offsetValue);
                 selectedStartPos->m_controlID = offsetValue;
             }
