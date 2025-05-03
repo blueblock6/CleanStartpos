@@ -1,12 +1,12 @@
 {
-	"geode": "4.3.1",
+	"geode": "4.4.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
 		"mac": "2.2074",
         "ios": "2.2074"
 	},
-	"version": "v1.3.3",
+	"version": "v1.3.4",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
@@ -19,5 +19,8 @@
 		"interface",
 		"enhancement",
         "bugfix"
-	]
+	],
+    "dependencies": {
+        "geode.node-ids": ">=v1.20.1"
+    }
 }

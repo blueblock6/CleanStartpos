@@ -1,3 +1,9 @@
+# 1.3.4
+
+- Added velocity input
+- Added Create StartPos button
+- Fixed Area Trigger lag
+
 # 1.3.3
 
 - iOS Support

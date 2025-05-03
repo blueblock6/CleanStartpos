@@ -5,6 +5,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/DrawGridLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
+#include <Geode/modify/GameObject.hpp>
 
 using namespace geode::prelude;
 
@@ -29,7 +30,7 @@ using namespace geode::prelude;
     toggle->setEnabled(!disable);                                                                                           \
     toggle->setPositionY(start - 22);                                                                                       \
     menu->addChild(toggle);                                                                                                 \
-    start -= 40;
+    start -= 45;
 
 std::unordered_map<short, std::pair<StartPosObject*, GameObject*>> links;
 short maxLink;
@@ -43,6 +44,7 @@ void encodeFakeStartpos(GameObject* obj, LevelSettingsObject* settings) {
     obj->m_isScaleStick = settings->m_startMini;
     obj->m_isDontBoostX = settings->m_reverseGameplay;
     obj->m_hasExtendedCollision = settings->m_disableStartPos;
+    if(auto ref = links[obj->m_objectMaterial].first) ref->m_startSettings->m_propertykA44 = settings->m_spawnGroup;
 }
 
 LevelSettingsObject* loadFakeStartpos(GameObject* obj, StartPosObject* reference) {
@@ -52,6 +54,7 @@ LevelSettingsObject* loadFakeStartpos(GameObject* obj, StartPosObject* reference
     settings->m_startMini = obj->m_isScaleStick;
     settings->m_reverseGameplay = obj->m_isDontBoostX;
     settings->m_disableStartPos = obj->m_hasExtendedCollision;
+    settings->m_spawnGroup = reference->m_startSettings->m_propertykA44;
     return settings;
 }
 
@@ -59,6 +62,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     struct Fields {
         bool isP2 = false;
         CCMenuItemSpriteExtra* linkBtn = nullptr;
+        TextInput* velocityInput = nullptr;
         TextInput* offsetInput = nullptr;
     };
 
@@ -72,26 +76,26 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         auto center = CCDirector::sharedDirector()->getWinSize() / 2;
 
         // Move Stuff
-        m_mainLayer->getChildByType(0)->setContentSize({450, 190});         // BG
-        m_buttonMenu->getChildByType(0)->setPositionY(-35);                 // OK
+        m_mainLayer->getChildByType(0)->setContentSize({455, 250});         // BG
+        m_buttonMenu->getChildByType(0)->setPositionY(-100);                // OK
         m_mainLayer->getChildByType(4)->setPositionX(center.width - 80);    // Target Order Label
-        m_mainLayer->getChildByType(4)->setPositionY(center.height - 5);    // Target Order Label
+        m_mainLayer->getChildByType(4)->setPositionY(center.height - 70);   // Target Order Label
         m_mainLayer->getChildByType(5)->setPositionX(center.width - 80);    // Target Order BG
-        m_mainLayer->getChildByType(5)->setPositionY(center.height - 35);   // Target Order BG
+        m_mainLayer->getChildByType(5)->setPositionY(center.height - 100);  // Target Order BG
         m_mainLayer->getChildByType(5)->setContentWidth(80);                // Target Order BG
         m_mainLayer->getChildByType(7)->setPositionX(center.width + 80);    // Target Channel Label
-        m_mainLayer->getChildByType(7)->setPositionY(center.height - 5);    // Target Channel Label
+        m_mainLayer->getChildByType(7)->setPositionY(center.height - 70);   // Target Channel Label
         m_mainLayer->getChildByType(8)->setPositionX(center.width + 80);    // Target Channel BG
-        m_mainLayer->getChildByType(8)->setPositionY(center.height - 35);   // Target Channel BG
+        m_mainLayer->getChildByType(8)->setPositionY(center.height - 100);  // Target Channel BG
         m_mainLayer->getChildByType(8)->setContentWidth(80);                // Target Channel BG
         if(m_fields->isP2) {
             m_mainLayer->getChildByType(6)->setVisible(false);              // Target Order Input
             m_mainLayer->getChildByType(9)->setVisible(false);              // Target Channel Input
         } else {
             m_mainLayer->getChildByType(6)->setPositionX(center.width - 80);    // Target Order Input
-            m_mainLayer->getChildByType(6)->setPositionY(center.height - 35);   // Target Order Input
+            m_mainLayer->getChildByType(6)->setPositionY(center.height - 100);  // Target Order Input
             m_mainLayer->getChildByType(9)->setPositionX(center.width + 80);    // Target Channel Input
-            m_mainLayer->getChildByType(9)->setPositionY(center.height - 35);   // Target Channel Input
+            m_mainLayer->getChildByType(9)->setPositionY(center.height - 100);  // Target Channel Input
         }
 
         // Hide Stuff
@@ -120,12 +124,11 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         ADD_BUTTON("gj_spiderBtn_off_001.png", 6, CleanStartpos::onCMode, p0->m_startMode, false);
         ADD_BUTTON("gj_swingBtn_off_001.png", 7, CleanStartpos::onCMode, p0->m_startMode, false);
         menu->updateLayout(false);
-        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {0, 70}, false);
+        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {0, 95}, false);
         
         menu = CCMenu::create();
         menu->setID("select-speed-menu"_spr);
         menu->setContentWidth(300.f);
-        menu->setScale(.8f);
         menu->setLayout(RowLayout::create());
         ADD_BUTTON("boost_01_001.png", 1, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed), m_fields->isP2);
         ADD_BUTTON("boost_02_001.png", 0, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed), m_fields->isP2);
@@ -133,7 +136,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         ADD_BUTTON("boost_04_001.png", 3, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed), m_fields->isP2);
         ADD_BUTTON("boost_05_001.png", 4, CleanStartpos::onCSpeed, static_cast<int>(p0->m_startSpeed), m_fields->isP2);
         menu->updateLayout(false);
-        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {0, 25}, false);
+        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {0, 40}, false);
 
         CCLabelBMFont* label;
         auto check0 = CCSpriteGrayscale::createWithSpriteFrameName("GJ_checkOff_001.png");
@@ -146,23 +149,27 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
 
         menu = CCMenu::create();
         menu->setID("left-properties-menu"_spr);
-        menu->setContentSize({75, 160});
-        float start = 80;
+        float start = 100;
         ADD_TOGGLE("Flip", 100, p0->m_isFlipped, false);
         ADD_TOGGLE("Mini", 101, p0->m_startMini, false);
         ADD_TOGGLE("Dual", 102, p0->m_startDual, m_fields->isP2);
         ADD_TOGGLE("Mirror", 103, p0->m_mirrorMode, m_fields->isP2);
-        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {-180, 0}, false);
+        bool freeMode = false;
+        if(m_fields->isP2) {
+            auto obj = static_cast<GameObject*>(p0->getUserObject());
+            if(links[obj->m_objectMaterial].first) freeMode = links[obj->m_objectMaterial].first->m_isIceBlock;
+        } else freeMode = selectedStartPos->m_isIceBlock;
+        ADD_TOGGLE("Free Mode", 108, freeMode, m_fields->isP2);
+        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {-180, 10}, false);
 
         menu = CCMenu::create();
-        menu->setID("left-properties-menu"_spr);
-        menu->setContentSize({75, 160});
-        start = 80;
+        menu->setID("right-properties-menu"_spr);
+        start = 100;
         ADD_TOGGLE("Rotate", 104, p0->m_rotateGameplay, m_fields->isP2);
         ADD_TOGGLE("Reverse", 105, p0->m_reverseGameplay, false);
         ADD_TOGGLE("Reset Camera", 106, p0->m_resetCamera, m_fields->isP2);
         ADD_TOGGLE("Disable", 107, p0->m_disableStartPos, false);
-        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {180, 0}, false);
+        m_mainLayer->addChildAtPosition(menu, Anchor::Center, {180, 10}, false);
 
         m_fields->linkBtn = CCMenuItemExt::createSpriteExtraWithFrameName("gj_linkBtn_001.png", .8f, [this](auto sender){
             if(m_fields->isP2) {
@@ -196,7 +203,7 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         });
         m_fields->linkBtn->setVisible(m_fields->isP2 || p0->m_startDual || selectedStartPos->m_objectMaterial != 0);
         m_fields->linkBtn->setID("dual-link-btn"_spr);
-        m_fields->linkBtn->setPosition({-152.f, -21.f});
+        m_fields->linkBtn->setPosition({-152.f, -1.f});
         m_buttonMenu->addChild(m_fields->linkBtn);
 
         auto unlinkBtn = CCMenuItemExt::createSpriteExtraWithFrameName("gj_linkBtnOff_001.png", .8f, [this, p0](auto sender) {
@@ -216,25 +223,35 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
         });
         unlinkBtn->setVisible(m_fields->isP2 || links.contains(selectedStartPos->m_objectMaterial));
         unlinkBtn->setID("dual-unlink-btn"_spr);
-        unlinkBtn->setPosition({-208.f, -21.f});
+        unlinkBtn->setPosition({-208.f, -1.f});
         m_buttonMenu->addChild(unlinkBtn);
+
+        auto velocityLabel = CCLabelBMFont::create("Velocity", "goldFont.fnt");
+        velocityLabel->setID("velocity-label"_spr);
+        velocityLabel->setScale(.6f);
+        m_mainLayer->addChildAtPosition(velocityLabel, Anchor::Center, {-80.f, -12.f}, false);
+
+        m_fields->velocityInput = TextInput::create(80, "Velocity");
+        m_fields->velocityInput->setID("velocity-input"_spr);
+        m_fields->velocityInput->setCommonFilter(CommonFilter::Float);
+        m_mainLayer->addChildAtPosition(m_fields->velocityInput, Anchor::Center, {-80.f, -40.f}, false);
+
+        float velocityValue = *reinterpret_cast<float*>(&m_settingsObject->m_spawnGroup);
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(3) << velocityValue;
+        if(velocityValue != 0) m_fields->velocityInput->setString(stream.str());
+
+        auto offsetLabel = CCLabelBMFont::create("Border Offset", "goldFont.fnt");
+        offsetLabel->setID("offset-label"_spr);
+        offsetLabel->setScale(.6f);
+        m_mainLayer->addChildAtPosition(offsetLabel, Anchor::Center, {80.f, -12.f}, false);
 
         m_fields->offsetInput = TextInput::create(30, "0");
         m_fields->offsetInput->setID("offset-input"_spr);
         m_fields->offsetInput->setCommonFilter(CommonFilter::Int);
-        m_fields->offsetInput->getInputNode()->m_placeholderColor = {120, 170, 240};
         if(m_fields->isP2) m_fields->offsetInput->getInputNode()->setVisible(false);
         else if(selectedStartPos->m_controlID != 0) m_fields->offsetInput->setString(std::to_string(selectedStartPos->m_controlID));
-        m_mainLayer->addChildAtPosition(m_fields->offsetInput, Anchor::Center, {35.f, -70.f}, false);
-
-        auto offsetLabelA = CCLabelBMFont::create("Border", "goldFont.fnt");
-        offsetLabelA->setID("offset-label-a"_spr);
-        offsetLabelA->setScale(.6f);
-        m_mainLayer->addChildAtPosition(offsetLabelA, Anchor::Center, {100.f, -62.f}, false);
-        auto offsetLabelB = CCLabelBMFont::create("Offset", "goldFont.fnt");
-        offsetLabelB->setID("offset-label-b"_spr);
-        offsetLabelB->setScale(.6f);
-        m_mainLayer->addChildAtPosition(offsetLabelB, Anchor::Center, {100.f, -74.f}, false);
+        m_mainLayer->addChildAtPosition(m_fields->offsetInput, Anchor::Center, {80.f, -40.f}, false);
 
         auto offsetLeft = CCMenuItemExt::createSpriteExtraWithFrameName("edit_leftBtn_001.png", 1.f, [this](auto sender) {
             int value = 0;
@@ -243,7 +260,8 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
             m_fields->offsetInput->setString(std::to_string(--value));
         });
         offsetLeft->setID("decrease-offset-button"_spr);
-        m_buttonMenu->addChildAtPosition(offsetLeft, Anchor::BottomLeft, {7.5f, -70.f}, false);
+        if(m_fields->isP2) offsetLeft->setEnabled(false);
+        m_buttonMenu->addChildAtPosition(offsetLeft, Anchor::BottomLeft, {52.5f, -40.f}, false);
 
         auto offsetRight = CCMenuItemExt::createSpriteExtraWithFrameName("edit_rightBtn_001.png", 1.f, [this](auto sender) {
             int value = 0;
@@ -252,24 +270,8 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
             m_fields->offsetInput->setString(std::to_string(++value));
         });
         offsetRight->setID("increase-offset-button"_spr);
-        m_buttonMenu->addChildAtPosition(offsetRight, Anchor::BottomLeft, {62.5f, -70.f}, false);
-
-        CCMenuItemToggler* freeModeToggle;
-        if(m_fields->isP2) freeModeToggle = CCMenuItemToggler::create(check0, check1, this, nullptr);
-        else freeModeToggle = CCMenuItemToggler::createWithStandardSprites(this, menu_selector(CleanStartpos::toggleProperty), .8f);
-        freeModeToggle->setEnabled(!m_fields->isP2);
-        freeModeToggle->setID("free-mode-toggle"_spr);
-        freeModeToggle->setTag(108);
-        if(m_fields->isP2) {
-            auto obj = static_cast<GameObject*>(p0->getUserObject());
-            if(links[obj->m_objectMaterial].first) freeModeToggle->toggle(links[obj->m_objectMaterial].first->m_isIceBlock);
-        } else freeModeToggle->toggle(selectedStartPos->m_isIceBlock);
-        m_buttonMenu->addChildAtPosition(freeModeToggle, Anchor::BottomLeft, {-110.f, -70.f}, false);
-
-        CCLabelBMFont* freeModeLabel = CCLabelBMFont::create("Free Mode", "goldFont.fnt");
-        freeModeLabel->setID("free-mode-label"_spr);
-        freeModeLabel->setScale(.6f);
-        m_mainLayer->addChildAtPosition(freeModeLabel, Anchor::Center, {-55.f, -70.f}, false);
+        if(m_fields->isP2) offsetRight->setEnabled(false);
+        m_buttonMenu->addChildAtPosition(offsetRight, Anchor::BottomLeft, {107.5f, -40.f}, false);
 
         handleTouchPriority(this);
 
@@ -324,11 +326,17 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
 
     $override
     void onClose(CCObject* sender) {
-        if(!m_fields->isP2 && m_fields->linkBtn) {
-            int value = 0;
-            auto str = m_fields->offsetInput->getString();
-            std::from_chars(str.data(), str.data() + str.size(), value);
-            selectedStartPos->m_controlID = value;
+        if(m_fields->linkBtn) {
+            float velocityValue = 0;
+            auto str = m_fields->velocityInput->getString();
+            std::from_chars(str.data(), str.data() + str.size(), velocityValue);
+            m_settingsObject->m_spawnGroup = *reinterpret_cast<int*>(&velocityValue);
+            if(!m_fields->isP2) {
+                int offsetValue = 0;
+                str = m_fields->offsetInput->getString();
+                std::from_chars(str.data(), str.data() + str.size(), offsetValue);
+                selectedStartPos->m_controlID = offsetValue;
+            }
         }
         if(auto obj = typeinfo_cast<GameObject*>(m_settingsObject->getUserObject())) encodeFakeStartpos(obj, m_settingsObject);
         m_settingsObject->setUserObject(nullptr);
@@ -355,12 +363,15 @@ class $modify(GJBaseGameLayer) {
             tpObj->retain();
             this->playerWillSwitchMode(m_player1, tpObj);
         }
+        if(m_startPosObject->m_startSettings->m_spawnGroup != 0) m_player1->setYVelocity(*reinterpret_cast<float*>(&m_startPosObject->m_startSettings->m_spawnGroup), 0);
 
         if(!m_player2 || !links.contains(m_startPosObject->m_objectMaterial)) return;
         auto pair = links[m_startPosObject->m_objectMaterial];
         if(!pair.second) return;
         auto settings = loadFakeStartpos(pair.second, m_startPosObject);
         if(settings->m_disableStartPos) return;
+
+        if(settings->m_spawnGroup != 0) m_player2->setYVelocity(*reinterpret_cast<float*>(&m_startPosObject->m_startSettings->m_propertykA44) * 2, 0);
 
         m_player2->setPosition(pair.second->getPosition());
         if(settings->m_startMode != m_startPosObject->m_startSettings->m_startMode) switch(settings->m_startMode) {
@@ -401,28 +412,6 @@ class $modify(GJBaseGameLayer) {
     }
 
     $override
-    void addToSection(GameObject* p0) {
-        if(p0->m_objectID == 31 && p0->m_objectMaterial != 0) {
-            maxLink = std::max(maxLink, p0->m_objectMaterial);
-            if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].first = static_cast<StartPosObject*>(p0);
-            else links[p0->m_objectMaterial] = {static_cast<StartPosObject*>(p0), nullptr};
-        } else if(p0->m_objectID == 34 && p0->m_objectMaterial != 0) {
-            if(PlayLayer::get()) p0->m_isInvisible = true;
-            maxLink = std::max(maxLink, p0->m_objectMaterial);
-            if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].second = p0;
-            else links[p0->m_objectMaterial] = {nullptr, p0};
-        }
-        GJBaseGameLayer::addToSection(p0);
-    }
-
-    $override
-    void removeObjectFromSection(GameObject* p0) {
-        if(p0->m_objectID == 31 && links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].first = nullptr;
-        else if(p0->m_objectID == 34 && links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].second = nullptr;
-        GJBaseGameLayer::removeObjectFromSection(p0);
-    }
-
-    $override
     bool init() {
         maxLink = 0;
         links.clear();
@@ -459,7 +448,70 @@ class $modify(CPlayLayer, PlayLayer) {
     }
 };
 
-class $modify(EditorUI) {
+class $modify(CEditorUI, EditorUI) {
+    struct Fields {
+        CCMenuItemSpriteExtra* spBtn = nullptr;
+        bool paused = true;
+        float center = 0;
+    };
+    
+    $override
+    bool init(LevelEditorLayer* lel) {
+        if(!EditorUI::init(lel)) return false;
+
+        m_fields->spBtn = CCMenuItemExt::createSpriteExtra(CircleButtonSprite::createWithSpriteFrameName("edit_eStartPosBtn_001.png", 1.f, CircleBaseColor::Green, CircleBaseSize::Small), [this, lel](auto sender){
+            auto pl = lel->m_player1;
+            StartPosObject* sp = static_cast<StartPosObject*>(lel->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
+            auto settings = sp->m_startSettings;
+            settings->m_startsWithStartPos = true;
+            settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
+            float speed = pl->m_playerSpeed;
+            settings->m_startSpeed = speed == .7f ? Speed::Slow : speed == .9f ? Speed::Normal : speed == 1.1f ? Speed::Fast : speed == 1.3f ? Speed::Faster : Speed::Fastest;
+            settings->m_isFlipped = pl->m_isUpsideDown;
+            settings->m_startMini = pl->m_vehicleSize != 1.f;
+            settings->m_startDual = lel->m_gameState.m_isDualMode;
+            settings->m_rotateGameplay = pl->m_isSideways;
+            settings->m_reverseGameplay = pl->m_isGoingLeft;
+            float velocity = static_cast<float>(pl->m_yVelocity);
+            settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
+            float offset = ((m_fields->paused ? m_fields->center : (lel->m_groundLayer->getPositionY() + lel->m_groundLayer2->getPositionY()) / 2) - pl->getPositionY() - pl->getParent()->getPositionY()) / 30;
+            if(offset > 0) offset += .99f;
+            sp->m_controlID = offset;
+            if(lel->m_gameState.m_isDualMode) {
+                pl = lel->m_player2;
+                auto p2 = static_cast<GameObject*>(lel->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
+                sp->m_objectMaterial = ++maxLink;
+                p2->m_objectMaterial = maxLink;
+                links[maxLink] = {sp, p2};
+                settings = new LevelSettingsObject(*settings);
+                settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
+                settings->m_isFlipped = pl->m_isUpsideDown;
+                settings->m_startMini = pl->m_vehicleSize != 1.f;
+                settings->m_reverseGameplay = pl->m_isGoingLeft;
+                float velocity = static_cast<float>(pl->m_yVelocity);
+                settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
+                encodeFakeStartpos(p2, settings);
+            }
+        });
+        m_fields->spBtn->setID("create-startpos-button"_spr);
+        m_fields->spBtn->setVisible(false);
+
+        auto playtestMenu = this->getChildByID("playtest-menu");
+        playtestMenu->addChild(m_fields->spBtn);
+        playtestMenu->setContentWidth(playtestMenu->getContentWidth() + 50.f);
+        playtestMenu->updateLayout();
+        playtestMenu->setPositionX(playtestMenu->getPositionX() + 25);
+
+        return true;
+    }
+
+    $override
+    void onPlaytest(CCObject* sender) {
+        m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2;
+        m_fields->paused = true;
+        EditorUI::onPlaytest(sender);
+    }
+
     $override
     void selectObject(GameObject* p0, bool p1) {
         if(p0->m_objectID == 31) selectedStartPos = static_cast<StartPosObject*>(p0);
@@ -469,7 +521,7 @@ class $modify(EditorUI) {
 
     $override
     void editObject(CCObject* p0) {
-        if(m_selectedObject && m_selectedObject->m_objectID == 34) {
+        if(m_selectedObject && m_selectedObject->m_objectID == 34 && m_selectedObject->m_objectMaterial != 0) {
             auto ref = links[m_selectedObject->m_objectMaterial].first;
             if(!ref) return;
             auto settings = loadFakeStartpos(m_selectedObject, ref);
@@ -536,18 +588,67 @@ class $modify(LevelEditorLayer) {
     $override
     void removeSpecial(GameObject* p0) {
         LevelEditorLayer::removeSpecial(p0);
-        if(p0 && p0->m_objectID == 31 && links.contains(p0->m_objectMaterial)) geode::queueInMainThread([this, p0]{
-            auto link = links[p0->m_objectMaterial].second;
-            if(!link || m_undoObjects->count() == 0) return;
-            auto undo = static_cast<UndoObject*>(m_undoObjects->lastObject());
-            if(undo->m_command == UndoCommand::Delete) {
-                auto arr = CCArray::createWithObject(p0);
-                undo = UndoObject::createWithArray(CCArray::createWithObject(p0), UndoCommand::DeleteMulti);
-                m_undoObjects->replaceObjectAtIndex(m_undoObjects->count()-1, undo);
-            }
-            if(undo->m_command == UndoCommand::DeleteMulti) undo->m_objects->addObject(link);
-            else return;
-            this->removeObject(link, true);
-        });
+        if(p0->m_objectID == 34 && links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].second = nullptr;
+        else if(p0 && p0->m_objectID == 31 && links.contains(p0->m_objectMaterial)) {
+            links[p0->m_objectMaterial].first = nullptr;
+            geode::queueInMainThread([this, p0](){
+                auto link = links[p0->m_objectMaterial].second;
+                if(!link || m_undoObjects->count() == 0) return;
+                auto undo = static_cast<UndoObject*>(m_undoObjects->lastObject());
+                if(undo->m_command == UndoCommand::Delete) {
+                    auto arr = CCArray::createWithObject(p0);
+                    undo = UndoObject::createWithArray(CCArray::createWithObject(p0), UndoCommand::DeleteMulti);
+                    m_undoObjects->replaceObjectAtIndex(m_undoObjects->count()-1, undo);
+                }
+                if(undo->m_command == UndoCommand::DeleteMulti) undo->m_objects->addObject(link);
+                else return;
+                this->removeObject(link, true);
+            });
+        }
+    }
+
+    $override
+    void addSpecial(GameObject* p0) {
+        LevelEditorLayer::addSpecial(p0);
+        if(p0->m_objectID == 31 && p0->m_objectMaterial != 0) {
+            maxLink = std::max(maxLink, p0->m_objectMaterial);
+            if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].first = (StartPosObject*)(p0);
+            else links[p0->m_objectMaterial] = {(StartPosObject*)(p0), nullptr};
+        } else if(p0->m_objectID == 34 && p0->m_objectMaterial != 0) {
+            if(PlayLayer::get()) p0->m_isHide = true;
+            maxLink = std::max(maxLink, p0->m_objectMaterial);
+            if(links.contains(p0->m_objectMaterial)) links[p0->m_objectMaterial].second = p0;
+            else links[p0->m_objectMaterial] = {nullptr, p0};
+        }
+    }
+
+    $override
+    void onPlaytest() {
+        LevelEditorLayer::onPlaytest();
+        static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(true);
+        static_cast<CEditorUI*>(m_editorUI)->m_fields->paused = false;
+    }
+
+    $override
+    void onStopPlaytest() {
+        static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(false);
+        LevelEditorLayer::onStopPlaytest();
+    }
+};
+
+class $modify(GameObject) {
+    $override
+    void customSetup() {
+        GameObject::customSetup();
+        if(m_objectID == 31 && m_objectMaterial != 0) {
+            maxLink = std::max(maxLink, m_objectMaterial);
+            if(links.contains(m_objectMaterial)) links[m_objectMaterial].first = (StartPosObject*)(this);
+            else links[m_objectMaterial] = {(StartPosObject*)(this), nullptr};
+        } else if(m_objectID == 34 && m_objectMaterial != 0) {
+            if(PlayLayer::get()) m_isHide = true;
+            maxLink = std::max(maxLink, m_objectMaterial);
+            if(links.contains(m_objectMaterial)) links[m_objectMaterial].second = this;
+            else links[m_objectMaterial] = {nullptr, this};
+        }
     }
 };
