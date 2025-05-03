@@ -327,11 +327,20 @@ class $modify(CleanStartpos, LevelSettingsLayer) {
     $override
     void onClose(CCObject* sender) {
         if(m_fields->linkBtn) {
-            float velocityValue = std::stof(m_fields->velocityInput->getString());
+            auto str = m_fields->velocityInput->getString();
+            float velocityValue = 0;
+            bool valid;
+            if (str.empty()) valid = false;
+            else if (std::isdigit(str[0])) valid = true;
+            else valid = (str.length() > 1) && (
+                    (str[0] == '-' && std::isdigit(str[1])) ||
+                    (str[0] == '.' && std::isdigit(str[1])) ||
+                    (str.length() > 2 && str[0] == '-' && str[1] == '.' && std::isdigit(str[2])));
+            if(valid) velocityValue = std::stof(str);
             m_settingsObject->m_spawnGroup = *reinterpret_cast<int*>(&velocityValue);
             if(!m_fields->isP2) {
                 int offsetValue = 0;
-                auto str = m_fields->offsetInput->getString();
+                str = m_fields->offsetInput->getString();
                 std::from_chars(str.data(), str.data() + str.size(), offsetValue);
                 selectedStartPos->m_controlID = offsetValue;
             }
