@@ -6,7 +6,7 @@
 		"mac": "2.2074",
         "ios": "2.2074"
 	},
-	"version": "v1.3.4",
+	"version": "v1.3.5",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
@@ -22,5 +22,13 @@
 	],
     "dependencies": {
         "geode.node-ids": ">=v1.20.1"
+    },
+    "settings": {
+        "hide-startpos-button": {
+            "type": "bool",
+            "name": "Hide Create StartPos Button",
+            "description": "Hides the Create StartPos button from the playtest menu",
+            "default": false
+        }
     }
 }

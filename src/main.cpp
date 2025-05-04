@@ -466,6 +466,8 @@ class $modify(CEditorUI, EditorUI) {
     bool init(LevelEditorLayer* lel) {
         if(!EditorUI::init(lel)) return false;
 
+        if(Mod::get()->getSettingValue<bool>("hide-startpos-button")) return true;
+
         m_fields->spBtn = CCMenuItemExt::createSpriteExtra(CircleButtonSprite::createWithSpriteFrameName("edit_eStartPosBtn_001.png", 1.f, CircleBaseColor::Green, CircleBaseSize::Small), [this, lel](auto sender){
             auto pl = lel->m_player1;
             StartPosObject* sp = static_cast<StartPosObject*>(lel->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
@@ -514,8 +516,10 @@ class $modify(CEditorUI, EditorUI) {
 
     $override
     void onPlaytest(CCObject* sender) {
-        m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2;
-        m_fields->paused = true;
+        if(m_fields->spBtn) {
+            m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2;
+            m_fields->paused = true;
+        }
         EditorUI::onPlaytest(sender);
     }
 
@@ -632,13 +636,15 @@ class $modify(LevelEditorLayer) {
     $override
     void onPlaytest() {
         LevelEditorLayer::onPlaytest();
-        static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(true);
-        static_cast<CEditorUI*>(m_editorUI)->m_fields->paused = false;
+        if(auto btn = static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn) {
+            static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(true);
+            static_cast<CEditorUI*>(m_editorUI)->m_fields->paused = false;
+        }
     }
 
     $override
     void onStopPlaytest() {
-        static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(false);
+        if(auto btn = static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn) btn->setVisible(false);
         LevelEditorLayer::onStopPlaytest();
     }
 };
