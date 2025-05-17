@@ -1,3 +1,7 @@
+# 1.3.6
+
+- Add keybind to create StartPos
+
 # 1.3.5
 
 - Add setting to hide Create StartPos button
