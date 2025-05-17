@@ -6,7 +6,7 @@
 		"mac": "2.2074",
         "ios": "2.2074"
 	},
-	"version": "v1.3.5",
+	"version": "v1.3.6",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
@@ -21,7 +21,11 @@
         "bugfix"
 	],
     "dependencies": {
-        "geode.node-ids": ">=v1.20.1"
+        "geode.node-ids": ">=v1.20.1",
+        "geode.custom-keybinds": {
+            "version": ">=1.10.3",
+            "platforms": ["win", "mac", "android"]
+        }
     },
     "settings": {
         "hide-startpos-button": {

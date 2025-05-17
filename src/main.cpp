@@ -9,6 +9,22 @@
 
 using namespace geode::prelude;
 
+#ifndef GEODE_IS_IOS
+#include <geode.custom-keybinds/include/Keybinds.hpp>
+
+using namespace keybinds;
+
+$execute {
+    BindManager::get()->registerBindable({
+        "create-startpos"_spr,
+        "Create StartPos",
+        "",
+        { Keybind::create(KEY_Apostrophe, Modifier::None) },
+        "Editor"
+    });
+};
+#endif
+
 #define ADD_BUTTON(sprite, tag, callback, condition, disable)                                                           \
     btn = CCMenuItemSpriteExtra::create(                                                                                \
         disable ? CCSpriteGrayscale::createWithSpriteFrameName(sprite) : CCSprite::createWithSpriteFrameName(sprite),   \
@@ -465,43 +481,17 @@ class $modify(CEditorUI, EditorUI) {
     $override
     bool init(LevelEditorLayer* lel) {
         if(!EditorUI::init(lel)) return false;
+        
+        #ifndef GEODE_IS_IOS
+        this->template addEventListener<InvokeBindFilter>([this](InvokeBindEvent* event) {
+            if(event->isDown()) onCreateStartpos(nullptr);
+            return ListenerResult::Propagate;
+        }, "create-startpos"_spr);
+        #endif
 
         if(Mod::get()->getSettingValue<bool>("hide-startpos-button")) return true;
 
-        m_fields->spBtn = CCMenuItemExt::createSpriteExtra(CircleButtonSprite::createWithSpriteFrameName("edit_eStartPosBtn_001.png", 1.f, CircleBaseColor::Green, CircleBaseSize::Small), [this, lel](auto sender){
-            auto pl = lel->m_player1;
-            StartPosObject* sp = static_cast<StartPosObject*>(lel->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
-            auto settings = sp->m_startSettings;
-            settings->m_startsWithStartPos = true;
-            settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
-            float speed = pl->m_playerSpeed;
-            settings->m_startSpeed = speed == .7f ? Speed::Slow : speed == .9f ? Speed::Normal : speed == 1.1f ? Speed::Fast : speed == 1.3f ? Speed::Faster : Speed::Fastest;
-            settings->m_isFlipped = pl->m_isUpsideDown;
-            settings->m_startMini = pl->m_vehicleSize != 1.f;
-            settings->m_startDual = lel->m_gameState.m_isDualMode;
-            settings->m_rotateGameplay = pl->m_isSideways;
-            settings->m_reverseGameplay = pl->m_isGoingLeft;
-            float velocity = static_cast<float>(pl->m_yVelocity);
-            settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
-            float offset = ((m_fields->paused ? m_fields->center : (lel->m_groundLayer->getPositionY() + lel->m_groundLayer2->getPositionY()) / 2) - pl->getPositionY() - pl->getParent()->getPositionY()) / 30;
-            if(offset > 0) offset += .99f;
-            sp->m_controlID = offset;
-            if(lel->m_gameState.m_isDualMode) {
-                pl = lel->m_player2;
-                auto p2 = static_cast<GameObject*>(lel->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
-                sp->m_objectMaterial = ++maxLink;
-                p2->m_objectMaterial = maxLink;
-                links[maxLink] = {sp, p2};
-                settings = new LevelSettingsObject(*settings);
-                settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
-                settings->m_isFlipped = pl->m_isUpsideDown;
-                settings->m_startMini = pl->m_vehicleSize != 1.f;
-                settings->m_reverseGameplay = pl->m_isGoingLeft;
-                float velocity = static_cast<float>(pl->m_yVelocity);
-                settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
-                encodeFakeStartpos(p2, settings);
-            }
-        });
+        m_fields->spBtn = CCMenuItemSpriteExtra::create(CircleButtonSprite::createWithSpriteFrameName("edit_eStartPosBtn_001.png", 1.f, CircleBaseColor::Green, CircleBaseSize::Small), this, menu_selector(CEditorUI::onCreateStartpos));
         m_fields->spBtn->setID("create-startpos-button"_spr);
         m_fields->spBtn->setVisible(false);
 
@@ -514,12 +504,49 @@ class $modify(CEditorUI, EditorUI) {
         return true;
     }
 
+    void onCreateStartpos(CCObject*) {
+        auto pl = m_editorLayer->m_player1;
+        StartPosObject* sp = static_cast<StartPosObject*>(m_editorLayer->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
+        auto settings = sp->m_startSettings;
+        settings->m_startsWithStartPos = true;
+        settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
+        float speed = pl->m_playerSpeed;
+        settings->m_startSpeed = speed == .7f ? Speed::Slow : speed == .9f ? Speed::Normal : speed == 1.1f ? Speed::Fast : speed == 1.3f ? Speed::Faster : Speed::Fastest;
+        settings->m_isFlipped = pl->m_isUpsideDown;
+        settings->m_startMini = pl->m_vehicleSize != 1.f;
+        settings->m_startDual = m_editorLayer->m_gameState.m_isDualMode;
+        settings->m_rotateGameplay = pl->m_isSideways;
+        settings->m_reverseGameplay = pl->m_isGoingLeft;
+        float velocity = static_cast<float>(pl->m_yVelocity);
+        settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
+        float offset = ((m_fields->paused ? m_fields->center : (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2) - pl->getPositionY() - pl->getParent()->getPositionY()) / 30;
+        if(offset > 0) offset += .99f;
+        sp->m_controlID = offset;
+        if(m_editorLayer->m_gameState.m_isDualMode) {
+            pl = m_editorLayer->m_player2;
+            auto p2 = static_cast<GameObject*>(m_editorLayer->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
+            sp->m_objectMaterial = ++maxLink;
+            p2->m_objectMaterial = maxLink;
+            links[maxLink] = {sp, p2};
+            settings = new LevelSettingsObject(*settings);
+            settings->m_startMode = pl->isInNormalMode() ? 0 : pl->m_isShip ? 1 : pl->m_isBall ? 2 : pl->m_isBird ? 3 : pl->m_isDart ? 4 : pl->m_isRobot ? 5 : pl->m_isSpider ? 6 : 7;
+            settings->m_isFlipped = pl->m_isUpsideDown;
+            settings->m_startMini = pl->m_vehicleSize != 1.f;
+            settings->m_reverseGameplay = pl->m_isGoingLeft;
+            float velocity = static_cast<float>(pl->m_yVelocity);
+            settings->m_spawnGroup = *reinterpret_cast<int*>(&velocity);
+            encodeFakeStartpos(p2, settings);
+            auto arr = CCArray::create();
+            arr->addObject(sp);
+            arr->addObject(p2);
+            m_editorLayer->m_undoObjects->addObject(UndoObject::createWithArray(arr, UndoCommand::Paste));
+        } else m_editorLayer->m_undoObjects->addObject(UndoObject::create(sp, UndoCommand::New));
+    }
+
     $override
     void onPlaytest(CCObject* sender) {
-        if(m_fields->spBtn) {
-            m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2;
-            m_fields->paused = true;
-        }
+        m_fields->paused = true;
+        if(m_fields->spBtn) m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2;
         EditorUI::onPlaytest(sender);
     }
 
@@ -636,10 +663,8 @@ class $modify(LevelEditorLayer) {
     $override
     void onPlaytest() {
         LevelEditorLayer::onPlaytest();
-        if(auto btn = static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn) {
-            static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn->setVisible(true);
-            static_cast<CEditorUI*>(m_editorUI)->m_fields->paused = false;
-        }
+        static_cast<CEditorUI*>(m_editorUI)->m_fields->paused = false;
+        if(auto btn = static_cast<CEditorUI*>(m_editorUI)->m_fields->spBtn) btn->setVisible(true);
     }
 
     $override
