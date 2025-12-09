@@ -505,6 +505,11 @@ class $modify(CEditorUI, EditorUI) {
     }
 
     void onCreateStartpos(CCObject*) {
+		// Dont create SP when editing (not tested)
+		if (!m_editorLayer->m_isPlaying) {
+			return false;
+		}
+
         auto pl = m_editorLayer->m_player1;
         StartPosObject* sp = static_cast<StartPosObject*>(m_editorLayer->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
         auto settings = sp->m_startSettings;
