@@ -1,3 +1,12 @@
+# 2.0.0
+
+- Complete rewrite
+- Fixed Target Channel not being set by Create StartPos button / keybind
+- Fixed certain dual combinations having wrong border size
+- Fixed being able to place start positions even when not playtesting
+- Fixed first attempt from StartPos counting as 3 attempts
+- Made Custom Keybinds dependency optional
+
 # 1.3.6
 
 - Add keybind to create StartPos

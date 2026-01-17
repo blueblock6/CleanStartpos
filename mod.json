@@ -1,16 +1,16 @@
 {
-	"geode": "4.4.0",
+	"geode": "4.10.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
 		"mac": "2.2074",
         "ios": "2.2074"
 	},
-	"version": "v1.3.6",
+	"version": "v2.0.0",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
-	"description": "Puts all StartPos options on one page",
+	"description": "Puts all StartPos options on one page and adds some features",
 	"links": {
 		"source": "https://github.com/blueblock6/CleanStartpos"
 	},
@@ -23,8 +23,8 @@
     "dependencies": {
         "geode.node-ids": ">=v1.20.1",
         "geode.custom-keybinds": {
-            "version": ">=1.10.3",
-            "platforms": ["win", "mac", "android"]
+            "version": ">=v1.11.0",
+			"importance": "recommended"
         }
     },
     "settings": {
