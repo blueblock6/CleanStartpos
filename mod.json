@@ -1,0 +1,38 @@
+{
+	"geode": "4.10.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+        "ios": "2.2074"
+	},
+	"version": "v2.0.0",
+	"id": "blueblock6.cleanstartpos",
+	"name": "Clean StartPos",
+	"developer": "BlueBlock6",
+	"description": "Puts all StartPos options on one page and adds some features",
+	"links": {
+		"source": "https://github.com/blueblock6/CleanStartpos"
+	},
+	"tags": [
+		"editor",
+		"interface",
+		"enhancement",
+        "bugfix"
+	],
+    "dependencies": {
+        "geode.node-ids": ">=v1.20.1",
+        "geode.custom-keybinds": {
+            "version": ">=v1.11.0",
+			"importance": "recommended"
+        }
+    },
+    "settings": {
+        "hide-startpos-button": {
+            "type": "bool",
+            "name": "Hide Create StartPos Button",
+            "description": "Hides the Create StartPos button from the playtest menu",
+            "default": false
+        }
+    }
+}
