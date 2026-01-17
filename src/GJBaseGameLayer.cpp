@@ -8,13 +8,15 @@ using namespace geode::prelude;
 class $modify(GJBaseGameLayer) {
     struct Fields {
         TeleportPortalObject* tpObj = nullptr;
-
-        ~Fields() {
-            Links::links.clear();
-            for(auto sp : secondaryStartPosSettings) sp.second->release();
-            secondaryStartPosSettings.clear();
-        }
     };
+
+    $override
+    bool init() {
+        Links::links.clear();
+        for(auto sp : secondaryStartPosSettings) sp.second->release();
+        secondaryStartPosSettings.clear();
+        return GJBaseGameLayer::init();
+    }
 
     $override
     void loadStartPosObject() {

@@ -1,3 +1,7 @@
+# 2.0.1
+
+- Fixed linked start position data not getting properly cleaned up when switching levels
+
 # 2.0.0
 
 - Complete rewrite
