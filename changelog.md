@@ -1,3 +1,11 @@
+# 2.0.2-beta.1
+
+- 2.2081 and Geode v5.0.0-alpha.1 Support
+- Fixed crash when using Create StartPos button / keybind in levels with >80k objects
+- Fixed camera offset only applying on first attempt
+- Fixed select outline being larger
+- Temporary removed Create StartPos keybind (waiting on Custom Keybinds)
+
 # 2.0.1
 
 - Fixed linked start position data not getting properly cleaned up when switching levels

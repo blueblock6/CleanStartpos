@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include <LevelSettingsObjectExt.hpp>
 #include <Links.hpp>
 
@@ -26,7 +27,7 @@ class $modify(GJBaseGameLayer) {
         int startMode = -1;
 
         if(settings) {
-            m_startPosObject->m_startPosition += ccp(0, settings->m_fields->cameraOffset * 30);
+            if(!PlayLayer::get()) m_startPosObject->m_startPosition.y += settings->m_fields->cameraOffset * 30;
             if(p2Settings && !p2Settings->m_disableStartPos && !largeDual(settings->m_startMode) && largeDual(p2Settings->m_startMode)) {
                 startMode = settings->m_startMode;
                 settings->m_startMode = 4;
@@ -38,7 +39,7 @@ class $modify(GJBaseGameLayer) {
 
         if(PlayLayer::get()) GJBaseGameLayer::toggleFlipped(settings->m_mirrorMode, true);
 
-        m_startPosObject->m_startPosition -= ccp(0, settings->m_fields->cameraOffset * 30);
+        if(!PlayLayer::get()) m_startPosObject->m_startPosition.y -= settings->m_fields->cameraOffset * 30;
         if(startMode != -1) {
             settings->m_startMode = startMode;
             setMode(m_player1, startMode);
@@ -108,5 +109,21 @@ class $modify(GJBaseGameLayer) {
             case 6: player->toggleSpiderMode(true, true); break;
             case 7: player->toggleSwingMode(true, true); break;
         }
+    }
+};
+
+class $modify(PlayLayer) {
+    $override
+    void resetLevel() {
+        int offset = 0;
+        if(m_startPosObject) {
+            auto adv = static_cast<AdvancedStartPos*>(static_cast<GameObject*>(m_startPosObject));
+            offset = adv->getSettingsObject()->m_fields->cameraOffset * 30;
+            m_startPosObject->m_startPosition.y += offset;
+        }
+
+        PlayLayer::resetLevel();
+
+        if(m_startPosObject) m_startPosObject->m_startPosition.y -= offset;
     }
 };

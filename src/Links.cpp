@@ -140,5 +140,7 @@ class $modify(DrawGridLayer) {
                 ccDrawLine(entry.second.first->getPosition(), entry.second.second->getPosition());
             }
         }
+
+        glLineWidth(1.f);
     }
 };
