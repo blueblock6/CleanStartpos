@@ -1,3 +1,9 @@
+# 2.0.2
+
+- Geode v5.0.0-beta.1 Support
+- Re-added Create StartPos Keybind
+- Removed Custom Keybinds dependency
+
 # 2.0.2-beta.2
 
 - Geode v5.0.0-alpha.2 Support

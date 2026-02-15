@@ -2,29 +2,8 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Links.hpp>
-// #include <geode.custom-keybinds/include/OptionalAPI.hpp>
-#include <Geode/loader/Dispatch.hpp>
 
 using namespace geode::prelude;
-// using namespace keybinds;
-
-// $on_game(Loaded) {
-//     (void)[&]() -> Result<> {
-//         // CategoryV2::create returns Err if mod id is before geode.custom-keybinds? But manually extracting the function works?
-//         static auto CategoryV2_create = geode::geode_internal::callEventExportListener(&CategoryV2::create, "geode.custom-keybinds/CategoryV2::create");
-//         if(!CategoryV2_create) return Ok();
-//
-//         GEODE_UNWRAP(BindManagerV2::registerBindable(GEODE_UNWRAP(BindableActionV2::create(
-//             "create-startpos"_spr,
-//             "Create StartPos",
-//             "Creates a Start Position at the player's position with all important gameplay elements",
-//             { GEODE_UNWRAP(KeybindV2::create(cocos2d::KEY_Apostrophe, ModifierV2::None)) },
-//             GEODE_UNWRAP(CategoryV2_create("Editor"))
-//         ))));
-//         return Ok();
-//     }();
-// }
-
 class $modify(CEditorUI, EditorUI) {
     struct Fields {
         CCMenuItemSpriteExtra* createStartPosBtn = nullptr;
@@ -34,12 +13,11 @@ class $modify(CEditorUI, EditorUI) {
     bool init(LevelEditorLayer* lel) {
         if(!EditorUI::init(lel)) return false;
 
-        // this->addEventListener<InvokeBindFilterV2>([this](InvokeBindEventV2* event) {
-        //     if(event->isDown() && m_playtestStopBtn->isVisible()) {
-        //         onCreateStartPos(nullptr);
-        //     }
-        //     return ListenerResult::Propagate;
-        // }, "create-startpos"_spr);
+        this->addEventListener(KeybindSettingPressedEvent(Mod::get(), "create-startpos-keybind"), [this](const Keybind& keybind, bool down, bool repeat) {
+            if(down && !repeat && m_playtestStopBtn->isVisible()) {
+                onCreateStartPos(nullptr);
+            }
+        });
 
         if(Mod::get()->getSettingValue<bool>("hide-startpos-button")) return true;
 

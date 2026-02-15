@@ -6,7 +6,6 @@
 - Adds ability to enable free mode
 - Adds ability to set starting velocity
 - Adds button to create a StartPos with current game state during playtesting (Button can be hidden in settings)
-- Adds keybind to create a StartPos with current game state during playtesting (Defaults to apostrophe ('), can be changed in main settings / options / keys)
-  - Temporarily disabled until Custom Keybinds updates
+- Adds keybind to create a StartPos with current game state during playtesting (Defaults to apostrophe ('), can be changed in settings)
 - Fixes mirror toggle
 - Fixes copying start positions not retaining data
