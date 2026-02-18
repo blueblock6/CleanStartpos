@@ -1,6 +1,6 @@
 # 2.0.3
 
-- Fixed keybing setting ABI change
+- Fixed keybind setting ABI change
 - Fixed a couple potential rare crashes
 
 # 2.0.2
