@@ -1,3 +1,8 @@
+# 2.0.3
+
+- Fixed keybing setting ABI change
+- Fixed a couple potential rare crashes
+
 # 2.0.2
 
 - Geode v5.0.0-beta.1 Support

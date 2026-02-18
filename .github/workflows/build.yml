@@ -14,6 +14,7 @@ jobs:
         config:
         - name: Windows
           os: windows-latest
+          build-type: RelWithDebInfo
           
         - name: macOS
           os: macos-latest
@@ -42,6 +43,8 @@ jobs:
           bindings: geode-sdk/bindings
           bindings-ref: main
           combine: true
+          export-pdb: true
+          build-config: ${{ matrix.config.build-type || 'Release' }}
           target: ${{ matrix.config.target }}
       
   package:

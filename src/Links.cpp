@@ -67,6 +67,8 @@ class $modify(LevelEditorLayer) {
             Links::setSecondary(id, nullptr);
         } else if(p0->m_objectID == 31 && id != 0) {
             Links::setPrimary(id, nullptr);
+            p0->retain();
+            this->retain();
             geode::queueInMainThread([this, p0, id]() {
                 auto link = Links::getSecondary(id);
                 if(!link || m_undoObjects->count() == 0) return;
@@ -84,6 +86,9 @@ class $modify(LevelEditorLayer) {
                 }
 
                 this->removeObject(link, true);
+
+                p0->release();
+                this->release();
             });
         }
     }

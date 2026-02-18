@@ -13,7 +13,7 @@ class $modify(CEditorUI, EditorUI) {
     bool init(LevelEditorLayer* lel) {
         if(!EditorUI::init(lel)) return false;
 
-        this->addEventListener(KeybindSettingPressedEvent(Mod::get(), "create-startpos-keybind"), [this](const Keybind& keybind, bool down, bool repeat) {
+        this->addEventListener(KeybindSettingPressedEvent(Mod::get(), "create-startpos-keybind"), [this](const Keybind& keybind, bool down, bool repeat, double) {
             if(down && !repeat && m_playtestStopBtn->isVisible()) {
                 onCreateStartPos(nullptr);
             }
