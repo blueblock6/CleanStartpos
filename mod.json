@@ -1,12 +1,12 @@
 {
-	"geode": "5.0.0-beta.1",
+	"geode": "5.0.0-beta.3",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
 		"mac": "2.2081",
         "ios": "2.2081"
 	},
-	"version": "v2.0.2",
+	"version": "v2.0.3",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
@@ -26,8 +26,10 @@
     "settings": {
         "create-startpos-keybind": {
             "type": "keybind",
-            "name": "Create StartPos Keybind",
+            "name": "Create StartPos",
             "description": "Creates a StartPos with current game state during playtesting",
+            "category": "editor",
+            "migrate-from": "blueblock6.cleanstartpos/create-startpos",
             "default": "'"
         },
         "hide-startpos-button": {

@@ -70,9 +70,6 @@ void AdvancedStartPos::encodeSettings(LevelSettingsObjectExt* settings) {
 void AdvancedStartPos::customSetup() {
     GameObject::customSetup();
     if(m_objectID == 31) {
-        geode::queueInMainThread([this](){
-            getRealStartPos()->m_startSettings->setUserObject(this);
-        });
         if(m_linkId != 0) {
             Links::setPrimary(m_linkId, this);
         }
