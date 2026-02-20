@@ -40,7 +40,7 @@ class $modify(CEditorUI, EditorUI) {
 
     void onCreateStartPos(CCObject*) {
         auto pl = m_editorLayer->m_player1;
-        auto startPos = static_cast<AdvancedStartPos*>(m_editorLayer->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, true)->firstObject());
+        auto startPos = static_cast<AdvancedStartPos*>(m_editorLayer->createObjectsFromString(fmt::format("1,31,2,{},3,{}", pl->getPositionX(), pl->getPositionY() - 90).c_str(), true, true)->firstObject());
 
         auto settings = startPos->getSettingsObject();
         settings->m_startsWithStartPos = true;
@@ -59,7 +59,7 @@ class $modify(CEditorUI, EditorUI) {
 
         if(m_editorLayer->m_gameState.m_isDualMode) {
             pl = m_editorLayer->m_player2;
-            auto startPos2 = static_cast<AdvancedStartPos*>(m_editorLayer->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", pl->getPositionX(), pl->getPositionY() - 90).c_str(), false, false)->firstObject());
+            auto startPos2 = static_cast<AdvancedStartPos*>(m_editorLayer->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", pl->getPositionX(), pl->getPositionY() - 90).c_str(), true, true)->firstObject());
 
             short id = Links::nextId();
             startPos->m_linkId = id;
