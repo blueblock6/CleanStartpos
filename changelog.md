@@ -1,3 +1,7 @@
+# 2.0.4
+
+- Fixed undo crash
+
 # 2.0.3
 
 - Fixed keybind setting ABI change
