@@ -1,3 +1,7 @@
+# 2.0.5
+
+- Fix crash when creating linked StartPos in levels with >80k objects
+
 # 2.0.4
 
 - Fixed undo crash
