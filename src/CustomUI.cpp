@@ -307,7 +307,7 @@ class $modify(CustomUI, LevelSettingsLayer) {
         m_fields->object->m_linkId = id;
         // LevelEditorLayer::createObject + m_isNoTouch = true doesn't remove collision until editor is reloaded \_(._.)_/
         auto obj = static_cast<AdvancedStartPos*>(
-            LevelEditorLayer::get()->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", realStartPos->m_positionX, realStartPos->m_positionY - 30).c_str(), false, false)
+            LevelEditorLayer::get()->createObjectsFromString(fmt::format("1,34,2,{},3,{},121,1", realStartPos->m_positionX, realStartPos->m_positionY - 30).c_str(), true, true)
             ->firstObject()
         );
         obj->m_linkId = id;
@@ -317,6 +317,7 @@ class $modify(CustomUI, LevelSettingsLayer) {
 
         onClose(this);
         auto eu = EditorUI::get();
+        eu->m_editorLayer->m_undoObjects->addObject(UndoObject::create(obj, UndoCommand::New));
         eu->selectObject(obj, true);
         eu->updateButtons();
     }
