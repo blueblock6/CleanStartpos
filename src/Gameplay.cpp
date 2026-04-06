@@ -7,10 +7,6 @@
 using namespace geode::prelude;
 
 class $modify(GJBaseGameLayer) {
-    struct Fields {
-        TeleportPortalObject* tpObj = nullptr;
-    };
-
     $override
     bool init() {
         Links::links.clear();
@@ -46,13 +42,9 @@ class $modify(GJBaseGameLayer) {
         }
 
         if(settings->m_fields->isFreeCam) {
-            CC_SAFE_RELEASE(m_fields->tpObj);
-            m_fields->tpObj = TeleportPortalObject::create("edit_eGameRotBtn_001.png", true);
-            m_fields->tpObj->m_cameraIsFreeMode = true;
-            m_fields->tpObj->m_cameraEasingValue = 10;
-            m_fields->tpObj->m_cameraPaddingValue = .5f;
-            m_fields->tpObj->retain();
-            this->playerWillSwitchMode(m_player1, m_fields->tpObj);
+            m_gameState.m_unkBool8 = true;
+            updateDualGround(m_player1, 0, false, 0.f);
+            m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
         }
 
         m_player1->setYVelocity(settings->m_fields->yVelocity, 0);

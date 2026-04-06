@@ -1,6 +1,12 @@
+# 2.0.6
+
+- Fixed Camera Offset having no effect when Free Mode is enabled
+- Fixed Free Mode not being set by Create StartPos button / keybind
+- Fixed memory leak & subsequent game freeze
+
 # 2.0.5
 
-- Fix crash when creating linked StartPos in levels with >80k objects
+- Fixed crash when creating linked StartPos in levels with >80k objects
 
 # 2.0.4
 
@@ -44,11 +50,11 @@
 
 # 1.3.6
 
-- Add keybind to create StartPos
+- Added keybind to create StartPos
 
 # 1.3.5
 
-- Add setting to hide Create StartPos button
+- Added setting to hide Create StartPos button
 
 # 1.3.4
 
@@ -66,14 +72,14 @@
 
 # 1.3.1
 
-- Fix level settings crash
+- Fixed level settings crash
 
 # 1.3.0
 
 - Added dual StartPos linking
 - Added border offset input
 - Added free mode toggle
-- Fix copying start positions not retaining settings
+- Fixed copying start positions not retaining settings
 
 # 1.2.6
 
@@ -85,12 +91,12 @@
 
 # 1.2.5
 
-- Make mirror instant
-- Fix crash
+- Made mirror instant
+- Fixed crash
 
 # 1.2.4
 
-- Fix mirror toggle
+- Fixed mirror toggle
 
 # 1.2.3
 
@@ -98,7 +104,7 @@
 
 # 1.2.2
 
-- Fix android crash
+- Fixed android crash
 
 # 1.2.1
 
@@ -115,11 +121,11 @@
 
 # 1.0.2
 
-- Remove hardcoded positions
+- Removed hardcoded positions
 
 # 1.0.1
 
-- Add android support
+- Added android support
 
 # 1.0.0
 
