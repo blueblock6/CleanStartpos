@@ -71,7 +71,11 @@ class $modify(LevelEditorLayer) {
             this->retain();
             geode::queueInMainThread([this, p0, id]() {
                 auto link = Links::getSecondary(id);
-                if(!link || m_undoObjects->count() == 0) return;
+                if(!link || m_undoObjects->count() == 0) {
+                    p0->release();
+                    this->release();
+                    return;
+                }
 
                 auto undo = static_cast<UndoObject*>(m_undoObjects->lastObject());
                 if(undo->m_command == UndoCommand::Delete) {
@@ -82,6 +86,8 @@ class $modify(LevelEditorLayer) {
                 if(undo->m_command == UndoCommand::DeleteMulti) {
                     undo->m_objects->addObject(link);
                 } else {
+                    p0->release();
+                    this->release();
                     return;
                 }
 

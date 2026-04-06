@@ -55,6 +55,7 @@ class $modify(CEditorUI, EditorUI) {
         settings->m_targetChannel = m_editorLayer->m_gameState.m_currentChannel;
         settings->m_fields->yVelocity = static_cast<float>(pl->m_yVelocity);
         // TODO offset
+        settings->m_fields->isFreeCam = m_editorLayer->m_gameState.m_unkBool8;
         startPos->encodeSettings(settings);
 
         if(m_editorLayer->m_gameState.m_isDualMode) {

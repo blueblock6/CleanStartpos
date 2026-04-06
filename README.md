@@ -10,4 +10,4 @@
 - Fixes mirror toggle
 - Fixes copying start positions not retaining data
 
-![preview](https://raw.githubusercontent.com/blueblock6/CleanStartpos/refs/heads/master/previews/preview-1.png)
+![preview](https://raw.githubusercontent.com/blueblock6/CleanStartpos/refs/heads/main/previews/preview-1.png)
