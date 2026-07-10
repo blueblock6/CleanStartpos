@@ -45,6 +45,8 @@ class $modify(GJBaseGameLayer) {
             m_gameState.m_unkBool8 = true;
             updateDualGround(m_player1, 0, false, 0.f);
             m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
+        } else if(!settings->m_startDual && (settings->m_startMode == 0 || settings->m_startMode == 5)) {
+            m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
         }
 
         m_player1->setYVelocity(settings->m_fields->yVelocity, 0);

@@ -5,7 +5,7 @@
 
 #define m_linkId m_objectMaterial
 
-static std::map<GameObject*, LevelSettingsObjectExt*> secondaryStartPosSettings;
+extern std::map<GameObject*, LevelSettingsObjectExt*> secondaryStartPosSettings;
 
 class $modify(AdvancedStartPos, GameObject) {
     StartPosObject* getRealStartPos();

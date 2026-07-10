@@ -3,6 +3,8 @@
 
 using namespace geode::prelude;
 
+std::map<GameObject*, LevelSettingsObjectExt*> secondaryStartPosSettings;
+
 StartPosObject* AdvancedStartPos::getRealStartPos() {
     return typeinfo_cast<StartPosObject*>(this);
 }
@@ -12,7 +14,7 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
         auto settings = static_cast<LevelSettingsObjectExt*>(startPos->m_startSettings);
         settings->m_fields->isFreeCam = m_isIceBlock;
         settings->m_fields->cameraOffset = startPos->m_controlID;
-        settings->m_fields->yVelocity = *reinterpret_cast<float*>(&settings->m_spawnGroup);
+        settings->m_fields->yVelocity = std::bit_cast<float>(settings->m_spawnGroup);
         return settings;
     }
 
@@ -42,7 +44,7 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
         settings->m_resetCamera = pSettings->m_resetCamera;
         settings->m_rotateGameplay = pSettings->m_rotateGameplay;
 
-        settings->m_fields->yVelocity = *reinterpret_cast<float*>(&pSettings->m_propertykA44);
+        settings->m_fields->yVelocity = std::bit_cast<float>(pSettings->m_propertykA44);
     }
 
     return settings;
@@ -52,7 +54,7 @@ void AdvancedStartPos::encodeSettings(LevelSettingsObjectExt* settings) {
     if(auto startPos = getRealStartPos()) {
         startPos->m_isIceBlock = settings->m_fields->isFreeCam;
         startPos->m_controlID = settings->m_fields->cameraOffset;
-        settings->m_spawnGroup = *reinterpret_cast<int*>(&settings->m_fields->yVelocity);
+        settings->m_spawnGroup = std::bit_cast<int>(settings->m_fields->yVelocity);
         return;
     }
     m_isNonStickX = (settings->m_startMode & 0b100) >> 2;
@@ -63,7 +65,7 @@ void AdvancedStartPos::encodeSettings(LevelSettingsObjectExt* settings) {
     m_isDontBoostX = settings->m_reverseGameplay;
     m_hasExtendedCollision = settings->m_disableStartPos;
     if(auto primary = Links::getPrimary(m_linkId)) {
-        primary->getSettingsObject()->m_propertykA44 = *reinterpret_cast<int*>(&settings->m_fields->yVelocity);
+        primary->getSettingsObject()->m_propertykA44 = std::bit_cast<int>(settings->m_fields->yVelocity);
     }
 }
 
