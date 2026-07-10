@@ -44,9 +44,9 @@ void Links::setSecondary(short id, AdvancedStartPos* secondary) {
 void Links::destroy(short id) {
     if(!links.contains(id)) return;
 
-    auto link = links[id];
-    link.first->m_linkId = 0;
-    link.second->m_linkId = 0;
+    auto [primary, secondary] = links[id];
+    if(primary) primary->m_linkId = 0;
+    if(secondary) secondary->m_linkId = 0;
     links.erase(id);
 }
 short Links::nextId() {
