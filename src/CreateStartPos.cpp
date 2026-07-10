@@ -7,6 +7,8 @@ using namespace geode::prelude;
 class $modify(CEditorUI, EditorUI) {
     struct Fields {
         CCMenuItemSpriteExtra* createStartPosBtn = nullptr;
+        bool paused = true;
+        float center = 0.f;
     };
 
     $override
@@ -54,8 +56,13 @@ class $modify(CEditorUI, EditorUI) {
         settings->m_reverseGameplay = pl->m_isGoingLeft;
         settings->m_targetChannel = m_editorLayer->m_gameState.m_currentChannel;
         settings->m_fields->yVelocity = static_cast<float>(pl->m_yVelocity);
-        // TODO offset
         settings->m_fields->isFreeCam = m_editorLayer->m_gameState.m_unkBool8;
+
+        float center = m_fields->paused ? m_fields->center : (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2.f;
+        float offset = (center - pl->getPositionY() - pl->getParent()->getPositionY()) / 30.f;
+        if(offset > 0) offset += .99f;
+        settings->m_fields->cameraOffset = offset;
+
         startPos->encodeSettings(settings);
 
         if(m_editorLayer->m_gameState.m_isDualMode) {
@@ -83,12 +90,21 @@ class $modify(CEditorUI, EditorUI) {
             m_editorLayer->m_undoObjects->addObject(UndoObject::create(startPos, UndoCommand::New));
         }
     }
+
+    $override
+    void onPlaytest(CCObject* sender) {
+        m_fields->paused = true;
+        m_fields->center = (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2.f;
+        EditorUI::onPlaytest(sender);
+    }
 };
 
 class $modify(LevelEditorLayer) {
     $override
     void onPlaytest() {
-        if(auto btn = static_cast<CEditorUI*>(m_editorUI)->m_fields->createStartPosBtn) {
+        auto ui = static_cast<CEditorUI*>(m_editorUI);
+        ui->m_fields->paused = false;
+        if(auto btn = ui->m_fields->createStartPosBtn) {
             btn->setVisible(true);
         }
         LevelEditorLayer::onPlaytest();
