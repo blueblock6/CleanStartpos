@@ -1,3 +1,9 @@
+# 2.0.7
+
+- Fixed Camera Offset not applying to Cube & Robot
+- Fixed Camera Offset not being set by Create StartPos button / keybind
+- Fixed memory leak
+
 # 2.0.6
 
 - Fixed Camera Offset having no effect when Free Mode is enabled
