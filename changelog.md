@@ -1,3 +1,7 @@
+# 2.0.8
+
+- Fixed offset bug when entering portals in dual mode
+
 # 2.0.7
 
 - Fixed Camera Offset not applying to Cube & Robot

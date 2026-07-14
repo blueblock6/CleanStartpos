@@ -7,6 +7,10 @@
 using namespace geode::prelude;
 
 class $modify(GJBaseGameLayer) {
+    struct Fields {
+        Ref<GameObject> offsetObj;
+    };
+
     $override
     bool init() {
         Links::links.clear();
@@ -20,33 +24,48 @@ class $modify(GJBaseGameLayer) {
         auto settings = m_startPosObject ? static_cast<AdvancedStartPos*>(static_cast<GameObject*>(m_startPosObject))->getSettingsObject() : nullptr;
         auto other = (settings && settings->m_startDual) ? Links::getSecondary(m_startPosObject->m_linkId) : nullptr;
         auto p2Settings = other ? other->getSettingsObject() : nullptr;
-        int startMode = -1;
-
-        if(settings) {
-            if(!PlayLayer::get()) m_startPosObject->m_startPosition.y += settings->m_fields->cameraOffset * 30;
-            if(p2Settings && !p2Settings->m_disableStartPos && !largeDual(settings->m_startMode) && largeDual(p2Settings->m_startMode)) {
-                startMode = settings->m_startMode;
-                settings->m_startMode = 4;
-            }
-        }
 
         GJBaseGameLayer::loadStartPosObject();
         if(!settings) return;
 
         if(PlayLayer::get()) GJBaseGameLayer::toggleFlipped(settings->m_mirrorMode, true);
 
-        if(!PlayLayer::get()) m_startPosObject->m_startPosition.y -= settings->m_fields->cameraOffset * 30;
-        if(startMode != -1) {
-            settings->m_startMode = startMode;
-            setMode(m_player1, startMode);
-        }
-
         if(settings->m_fields->isFreeCam) {
             m_gameState.m_unkBool8 = true;
             updateDualGround(m_player1, 0, false, 0.f);
             m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
-        } else if(!settings->m_startDual && (settings->m_startMode == 0 || settings->m_startMode == 5)) {
-            m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
+        } else {
+            if(!settings->m_startDual && (settings->m_startMode == 0 || settings->m_startMode == 5)) {
+                m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
+            } else {
+                auto offset = GameObject::createWithKey(286); // dual portal - id doesn't seem to matter though
+                auto pos = m_startPosObject->m_startPosition;
+                pos.y += settings->m_fields->cameraOffset * 30;
+                offset->m_startPosition = pos;
+                m_gameState.m_lastActivatedPortal1 = offset;
+                m_gameState.m_lastActivatedPortal2 = offset;
+                m_fields->offsetObj.swap(offset);
+
+                GameObjectType mode;
+                if(other) {
+                    if(largeDual(settings->m_startMode) || largeDual(p2Settings->m_startMode)) {
+                        mode = GameObjectType::ShipPortal;
+                    } else {
+                        mode = GameObjectType::CubePortal;
+                    }
+                } else switch(settings->m_startMode) {
+                    case 0: mode = GameObjectType::CubePortal; break;
+                    case 1: mode = GameObjectType::ShipPortal; break;
+                    case 2: mode = GameObjectType::BallPortal; break;
+                    case 3: mode = GameObjectType::UfoPortal; break;
+                    case 4: mode = GameObjectType::WavePortal; break;
+                    case 5: mode = GameObjectType::RobotPortal; break;
+                    case 6: mode = GameObjectType::SpiderPortal; break;
+                    case 7: mode = GameObjectType::SwingPortal; break;
+                }
+
+                this->updateDualGround(m_player1, static_cast<int>(mode), true, 0.f);
+            }
         }
 
         m_player1->setYVelocity(settings->m_fields->yVelocity, 0);
@@ -103,21 +122,5 @@ class $modify(GJBaseGameLayer) {
             case 6: player->toggleSpiderMode(true, true); break;
             case 7: player->toggleSwingMode(true, true); break;
         }
-    }
-};
-
-class $modify(PlayLayer) {
-    $override
-    void resetLevel() {
-        int offset = 0;
-        if(m_startPosObject) {
-            auto adv = static_cast<AdvancedStartPos*>(static_cast<GameObject*>(m_startPosObject));
-            offset = adv->getSettingsObject()->m_fields->cameraOffset * 30;
-            m_startPosObject->m_startPosition.y += offset;
-        }
-
-        PlayLayer::resetLevel();
-
-        if(m_startPosObject) m_startPosObject->m_startPosition.y -= offset;
     }
 };
