@@ -56,7 +56,10 @@ class $modify(CEditorUI, EditorUI) {
         settings->m_reverseGameplay = pl->m_isGoingLeft;
         settings->m_targetChannel = m_editorLayer->m_gameState.m_currentChannel;
         settings->m_fields->yVelocity = static_cast<float>(pl->m_yVelocity);
-        settings->m_fields->isFreeCam = m_editorLayer->m_gameState.m_unkBool8;
+        settings->m_fields->isFreeCam = m_editorLayer->m_gameState.m_isFreeMode;
+        startPos->setRotation(pl->getRotation());
+        settings->m_fields->rotationSpeed = pl->m_rotationSpeed;
+        settings->m_fields->rotateSpeed = pl->m_rotateSpeed;
 
         float center = m_fields->paused ? m_fields->center : (m_editorLayer->m_groundLayer->getPositionY() + m_editorLayer->m_groundLayer2->getPositionY()) / 2.f;
         float offset = (center - pl->getPositionY() - pl->getParent()->getPositionY()) / 30.f;
@@ -80,6 +83,9 @@ class $modify(CEditorUI, EditorUI) {
             settings->m_startMini = pl->m_vehicleSize != 1.f;
             settings->m_reverseGameplay = pl->m_isGoingLeft;
             settings->m_fields->yVelocity = static_cast<float>(pl->m_yVelocity);
+            startPos->setRotation(pl->getRotation());
+            settings->m_fields->rotationSpeed = pl->m_rotationSpeed;
+            settings->m_fields->rotateSpeed = pl->m_rotateSpeed;
             startPos2->encodeSettings(settings);
 
             auto arr = CCArray::create();

@@ -7,5 +7,7 @@ class $modify(LevelSettingsObjectExt, LevelSettingsObject) {
         bool isFreeCam = false;
         int cameraOffset = 0;
         float yVelocity = 0;
+        float rotationSpeed = 0;
+        float rotateSpeed = 0;
     };
 };

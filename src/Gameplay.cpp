@@ -31,7 +31,7 @@ class $modify(GJBaseGameLayer) {
         if(PlayLayer::get()) GJBaseGameLayer::toggleFlipped(settings->m_mirrorMode, true);
 
         if(settings->m_fields->isFreeCam) {
-            m_gameState.m_unkBool8 = true;
+            m_gameState.m_isFreeMode = true;
             updateDualGround(m_player1, 0, false, 0.f);
             m_gameState.m_cameraPosition.y += settings->m_fields->cameraOffset * 30;
         } else {
@@ -69,24 +69,27 @@ class $modify(GJBaseGameLayer) {
         }
 
         m_player1->setYVelocity(settings->m_fields->yVelocity, 0);
+        applyRotation(m_player1, m_startPosObject, settings);
 
         if(!p2Settings || p2Settings->m_disableStartPos) {
             if(m_player2) {
                 m_player2->setYVelocity(-settings->m_fields->yVelocity, 0);
+                applyRotation(m_player2, m_startPosObject, settings);
             }
             return;
         }
 
-        m_player2->setPosition(other->getPosition());
-        m_player2->m_position = other->getPosition();
-        m_player2->setYVelocity(p2Settings->m_fields->yVelocity * 2, 0);
-        m_player2->flipGravity(p2Settings->m_isFlipped, true);
-        m_player2->togglePlayerScale(p2Settings->m_startMini, true);
-        m_player2->doReversePlayer(p2Settings->m_reverseGameplay);
-
         if(p2Settings->m_startMode != settings->m_startMode) {
             setMode(m_player2, p2Settings->m_startMode);
         }
+
+        m_player2->setPosition(other->getPosition());
+        m_player2->m_position = other->getPosition();
+        m_player2->setYVelocity(p2Settings->m_fields->yVelocity, 0);
+        m_player2->flipGravity(p2Settings->m_isFlipped, true);
+        m_player2->togglePlayerScale(p2Settings->m_startMini, true);
+        m_player2->doReversePlayer(p2Settings->m_reverseGameplay);
+        applyRotation(m_player2, other, p2Settings);
     }
 
     inline bool largeDual(int mode) {
@@ -121,6 +124,18 @@ class $modify(GJBaseGameLayer) {
             case 5: player->toggleRobotMode(true, true); break;
             case 6: player->toggleSpiderMode(true, true); break;
             case 7: player->toggleSwingMode(true, true); break;
+        }
+    }
+
+    inline void applyRotation(PlayerObject* player, GameObject* object, LevelSettingsObjectExt* settings) {
+        player->setRotation(object->getRotation());
+        if(settings->m_startMode == 0) {
+            player->m_rotationSpeed = settings->m_fields->rotationSpeed;
+            player->m_isOnGround2 = false;
+        } else if(settings->m_startMode == 2) {
+            player->m_rotationSpeed = settings->m_fields->rotationSpeed;
+            player->m_rotateSpeed = settings->m_fields->rotateSpeed;
+            player->m_isBallRotating = true;
         }
     }
 };

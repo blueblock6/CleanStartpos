@@ -1,3 +1,9 @@
+# 2.1.0
+
+- Redesigned menu
+- Added rotation
+- Fixed velocity not always applying correctly to Player 2
+
 # 2.0.8
 
 - Fixed offset bug when entering portals in dual mode
