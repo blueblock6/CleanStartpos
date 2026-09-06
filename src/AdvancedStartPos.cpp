@@ -15,6 +15,8 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
         settings->m_fields->isFreeCam = m_isIceBlock;
         settings->m_fields->cameraOffset = startPos->m_controlID;
         settings->m_fields->yVelocity = std::bit_cast<float>(settings->m_spawnGroup);
+        settings->m_fields->rotationSpeed = m_baseColor->m_hsv.h;
+        settings->m_fields->rotateSpeed = m_baseColor->m_hsv.v;
         return settings;
     }
 
@@ -28,6 +30,8 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
         settings->m_startMini = m_isScaleStick;
         settings->m_reverseGameplay = m_isDontBoostX;
         settings->m_disableStartPos = m_hasExtendedCollision;
+        settings->m_fields->rotationSpeed = m_baseColor->m_hsv.h;
+        settings->m_fields->rotateSpeed = m_baseColor->m_hsv.v;
 
         settings->m_startsWithStartPos = true;
         settings->retain();
@@ -51,6 +55,8 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
 }
 
 void AdvancedStartPos::encodeSettings(LevelSettingsObjectExt* settings) {
+    m_baseColor->m_hsv.h = settings->m_fields->rotationSpeed;
+    m_baseColor->m_hsv.v = settings->m_fields->rotateSpeed;
     if(auto startPos = getRealStartPos()) {
         startPos->m_isIceBlock = settings->m_fields->isFreeCam;
         startPos->m_controlID = settings->m_fields->cameraOffset;

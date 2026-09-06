@@ -6,16 +6,214 @@
 
 using namespace geode::prelude;
 
+inline CCNode* createInput(CCNode* base, TextInput*& input, const char* title, const std::string& id, CommonFilter filter, const char* placeholder, const std::string& value, bool enabled = true) {
+    base->setID(id + "-node");
+    base->setContentSize({120, 50});
+    base->setAnchorPoint({.5f, .5f});
+
+    auto label = CCLabelBMFont::create(title, "goldFont.fnt");
+    label->setID(id + "-label");
+    label->setScale(.6f);
+    base->addChildAtPosition(label, Anchor::Center, {0, 17});
+
+    input = TextInput::create(80, placeholder);
+    input->setID(id + "-input");
+    input->setEnabled(enabled);
+    input->getInputNode()->setVisible(enabled);
+    input->setCommonFilter(filter);
+    if(value != "0" && value != "0.000") {
+        input->setString(value);
+    }
+    base->addChildAtPosition(input, Anchor::Center, {0, -11});
+
+    return base;
+}
+
+inline CCMenu* createToggle(const char* name, const std::string& id, int tag, CCNode* parent, SEL_MenuHandler callback, bool toggle, bool enabled = true) {
+    auto menu = CCMenu::create();
+    menu->setContentSize({80, 40});
+
+    auto label = CCLabelBMFont::create(name, "goldFont.fnt");
+    label->limitLabelWidth(80.f, .7f, .1f);
+    label->setID(id + "-label");
+    menu->addChildAtPosition(label, Anchor::Center, {0, 15});
+
+    CCMenuItemToggler* btn;
+    if(enabled) {
+        btn = CCMenuItemToggler::createWithStandardSprites(parent, callback, .8f);
+    } else {
+        auto checkOff = CCSpriteGrayscale::createWithSpriteFrameName("GJ_checkOff_001.png");
+        checkOff->setScale(.8f);
+        checkOff->setColor({127, 127, 127});
+        auto checkOn = CCSpriteGrayscale::createWithSpriteFrameName("GJ_checkOn_001.png");
+        checkOn->setScale(.8f);
+        checkOn->setColor({127, 127, 127});
+        btn = CCMenuItemToggler::create(checkOff, checkOn, parent, callback);
+        btn->setEnabled(false);
+    }
+    btn->setID(id);
+    btn->setTag(tag);
+    btn->toggle(toggle);
+    menu->addChildAtPosition(btn, Anchor::Center, {0, -7});
+
+    return menu;
+}
+
+class ExtraSettingsMenu : public Popup {
+private:
+    AdvancedStartPos* m_startPos;
+    LevelSettingsObjectExt* m_settings;
+    TextInput* m_velocityInput;
+    TextInput* m_offsetInput;
+    TextInput* m_rotationInput;
+    TextInput* m_rotationSpeedInput;
+    TextInput* m_rotateSpeedInput;
+    TextInput* m_targetOrderInput;
+    TextInput* m_targetChannelInput;
+
+    bool init(AdvancedStartPos* startPos, LevelSettingsObjectExt* settings) {
+        if(!Popup::init({455, 240})) return false;
+        this->incrementForcePrio();
+        m_noElasticity = true;
+
+        m_startPos = startPos;
+        m_settings = settings;
+        auto realStartPos = startPos->getRealStartPos();
+
+        this->setTitle("Extra Settings", "goldFont.fnt", .7f, 15.f);
+        m_buttonMenu->getChildByType()->setVisible(false);
+
+        auto okBtn = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("OK"),
+            this,
+            menu_selector(ExtraSettingsMenu::onClose)
+        );
+        m_buttonMenu->addChildAtPosition(okBtn, Anchor::Center, {0.f, -84.f});
+
+        auto infoBtn = InfoAlertButton::create(
+            "Help",
+            "These are more advanced options. It is better to let these get set by the Create StartPos button / keybind instead of setting them manually.\n"
+            "<cr>Velocity</c> sets player Y velocity\n"
+            "<cr>Offset</c> shifts the foor & ceiling\n"
+            "<cr>Rotation</c> sets player rotation\n"
+            "<cr>Rotation Speed</c> only affects Cube and Ball\n"
+            "<cr>Ball Rotation</c> multiplies ball rotation speed (caused by slopes)",
+            1.f
+        );
+        m_buttonMenu->addChildAtPosition(infoBtn, Anchor::TopLeft);
+
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_velocityInput, "Velocity", "velocity", CommonFilter::Float, "Velocity", fmt::format("{:.3f}", settings->m_fields->yVelocity).c_str()),
+            Anchor::Center, {-120.f, 64.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_offsetInput, "Offset", "offset", CommonFilter::Int, "Offset", std::to_string(settings->m_fields->cameraOffset), realStartPos),
+            Anchor::Center, {0.f, 64.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_rotationInput, "Rotation", "rotation", CommonFilter::Float, "Rotation", fmt::format("{:.3f}", startPos->getRotation()).c_str()),
+            Anchor::Center, {120.f, 64.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_targetOrderInput, "Target Order", "target-order", CommonFilter::Int, "Order", std::to_string(settings->m_targetOrder), realStartPos),
+            Anchor::Center, {-80.f, -5.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_targetChannelInput, "Target Channel", "target-channel", CommonFilter::Int, "Channel", std::to_string(settings->m_targetChannel), realStartPos),
+            Anchor::Center, {80.f, -5.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_rotationSpeedInput, "Rotation Speed", "rotation-speed", CommonFilter::Float, "Speed", fmt::format("{:.3f}", settings->m_fields->rotationSpeed).c_str()),
+            Anchor::Center, {-80.f, -74.f}, false
+        );
+        m_mainLayer->addChildAtPosition(
+            createInput(CCNode::create(), m_rotateSpeedInput, "Ball Rotation", "rotate-speed", CommonFilter::Float, "Speed", fmt::format("{:.3f}", settings->m_fields->rotateSpeed).c_str()),
+            Anchor::Center, {80.f, -74.f}, false
+        );
+
+        auto leftMenu = createLeftMenu();
+        m_mainLayer->addChildAtPosition(leftMenu, Anchor::Center, {-180.f, -34.f});
+
+        auto rightMenu = createRightMenu();
+        m_mainLayer->addChildAtPosition(rightMenu, Anchor::Center, {180.f, -34.f});
+
+        return true;
+    }
+
+    inline CCMenu* createLeftMenu() {
+        auto menu = CCMenu::create();
+        menu->setLayout(ColumnLayout::create()->setAxisReverse(true)->setAxisAlignment(AxisAlignment::End));
+        menu->setContentSize({100, 135});
+
+        bool isReal = m_startPos->getRealStartPos();
+        menu->setID("left-menu"_spr);
+        menu->addChild(createToggle("Mirror", "mirror", 0, this, menu_selector(ExtraSettingsMenu::onToggle), m_settings->m_mirrorMode, isReal));
+        menu->addChild(createToggle("Free Cam", "free-mode", 1, this, menu_selector(ExtraSettingsMenu::onToggle), m_settings->m_fields->isFreeCam, isReal));
+        menu->addChild(createToggle("Reset Camera", "reset-camera", 2, this, menu_selector(ExtraSettingsMenu::onToggle), m_settings->m_resetCamera, isReal));
+
+        menu->updateLayout();
+        return menu;
+    }
+
+    inline CCMenu* createRightMenu() {
+        auto menu = CCMenu::create();
+        menu->setLayout(ColumnLayout::create()->setAxisReverse(true)->setAxisAlignment(AxisAlignment::End));
+        menu->setContentSize({100, 135});
+
+        bool isReal = m_startPos->getRealStartPos();
+        menu->setID("right-menu"_spr);
+        menu->addChild(createToggle("Rotate", "rotate", 3, this, menu_selector(ExtraSettingsMenu::onToggle), m_settings->m_rotateGameplay, isReal));
+        menu->addChild(createToggle("Reverse", "reverse", 4, this, menu_selector(ExtraSettingsMenu::onToggle), m_settings->m_reverseGameplay));
+
+        auto btn = CCMenuItemExt::createSpriteExtraWithFrameName("GJ_optionsBtn02_001.png", 1.f, [](auto){ openSettingsPopup(Mod::get(), false); });
+        btn->setID("mod-settings"_spr);
+        menu->addChild(btn);
+
+        menu->updateLayout();
+        return menu;
+    }
+
+    void onToggle(CCObject* sender) {
+        auto toggle = static_cast<CCMenuItemToggler*>(sender);
+        auto state = !toggle->isToggled();
+        switch(toggle->getTag()) {
+            case 0: m_settings->m_mirrorMode = state; break;
+            case 1: m_settings->m_fields->isFreeCam = state; break;
+            case 2: m_settings->m_resetCamera = state; break;
+            case 3: m_settings->m_rotateGameplay = state; break;
+            case 4: m_settings->m_reverseGameplay = state; break;
+        }
+    }
+
+    void onClose(CCObject* sender) override {
+        m_settings->m_fields->cameraOffset = m_offsetInput ? utils::numFromString<int>(m_offsetInput->getString()).unwrapOrDefault() : 0;
+        m_settings->m_fields->yVelocity = m_velocityInput ? utils::numFromString<float>(m_velocityInput->getString()).unwrapOrDefault() : 0;
+        m_startPos->setRotation(m_rotationInput ? utils::numFromString<float>(m_rotationInput->getString()).unwrapOrDefault() : 0);
+        m_settings->m_fields->rotationSpeed = m_rotationSpeedInput ? utils::numFromString<float>(m_rotationSpeedInput->getString()).unwrapOrDefault() : 0;
+        m_settings->m_fields->rotateSpeed = m_rotateSpeedInput ? utils::numFromString<float>(m_rotateSpeedInput->getString()).unwrapOrDefault() : 0;
+        m_settings->m_targetOrder = m_targetOrderInput ? utils::numFromString<float>(m_targetOrderInput->getString()).unwrapOrDefault() : 0;
+        m_settings->m_targetChannel = m_targetChannelInput ? utils::numFromString<float>(m_targetChannelInput->getString()).unwrapOrDefault() : 0;
+        Popup::onClose(sender);
+    }
+public:
+    static ExtraSettingsMenu* create(AdvancedStartPos* startPos, LevelSettingsObjectExt* settings) {
+        auto ret = new ExtraSettingsMenu();
+        if(ret && ret->init(startPos, settings)) {
+            ret->autorelease();
+            return ret;
+        } else {
+            CC_SAFE_DELETE(ret);
+            return nullptr;
+        }
+    }
+};
+
 class $modify(CustomUI, LevelSettingsLayer) {
     struct Fields {
         AdvancedStartPos* object;
         LevelSettingsObjectExt* settings;
         CCMenu* modeMenu;
         CCMenu* speedMenu;
-        TextInput* targetOrderInput;
-        TextInput* targetChannelInput;
-        TextInput* velocityInput;
-        TextInput* offsetInput;
         CCMenuItemSpriteExtra* linkBtn;
         CCMenuItemSpriteExtra* unlinkBtn;
     };
@@ -34,47 +232,25 @@ class $modify(CustomUI, LevelSettingsLayer) {
         m_buttonMenu->setVisible(true);
 
         auto bg = m_mainLayer->getChildByType(0);
-        bg->setContentSize({455.f, 250.f});
+        bg->setContentSize({455.f, 200.f});
         bg->setVisible(true);
 
         auto okBtn = m_buttonMenu->getChildByType(0);
-        okBtn->setPositionY(-100.f);
+        okBtn->setPositionY(-70.f);
         okBtn->setVisible(true);
 
         auto leftMenu = createLeftMenu();
         m_mainLayer->addChildAtPosition(leftMenu, Anchor::Center, {-180.f, 0.f}, false);
-        auto rightMenu = createRightMenu();
-        m_mainLayer->addChildAtPosition(rightMenu, Anchor::Center, {180.f, 0.f}, false);
 
         m_fields->modeMenu = createModeMenu();
-        m_mainLayer->addChildAtPosition(m_fields->modeMenu, Anchor::Center, {0.f, 90.f}, false);
+        m_mainLayer->addChildAtPosition(m_fields->modeMenu, Anchor::Center, {0.f, 60.f}, false);
         m_fields->speedMenu = createSpeedMenu();
-        m_mainLayer->addChildAtPosition(m_fields->speedMenu, Anchor::Center, {-5.f, 40.f}, false);
-
-        std::ostringstream oss;
-        oss << std::fixed << std::setprecision(3) << m_fields->settings->m_fields->yVelocity;
-
-        m_mainLayer->addChildAtPosition(
-            createInput(CCNode::create(), m_fields->velocityInput, "Velocity", "velocity", CommonFilter::Float, "Velocity", oss.str()),
-            Anchor::Center, {-80.f, -25.f}, false
-        );
-        m_mainLayer->addChildAtPosition(
-            createInput(CCNode::create(), m_fields->offsetInput, "Offset", "offset", CommonFilter::Int, "Offset", std::to_string(m_fields->settings->m_fields->cameraOffset), realStartPos),
-            Anchor::Center, {80.f, -25.f}, false
-        );
-        m_mainLayer->addChildAtPosition(
-            createInput(CCNode::create(), m_fields->targetOrderInput, "Target Order", "target-order", CommonFilter::Int, "Order", std::to_string(m_fields->settings->m_targetOrder), realStartPos),
-            Anchor::Center, {-80.f, -89.f}, false
-        );
-        m_mainLayer->addChildAtPosition(
-            createInput(CCNode::create(), m_fields->targetChannelInput, "Target Channel", "target-channel", CommonFilter::Int, "Channel", std::to_string(m_fields->settings->m_targetChannel), realStartPos),
-            Anchor::Center, {80.f, -89.f}, false
-        );
+        m_mainLayer->addChildAtPosition(m_fields->speedMenu, Anchor::Center, {-5.f, 0.f}, false);
 
         auto linkMenu = CCMenu::create();
         linkMenu->setID("link-menu"_spr);
         linkMenu->setContentSize({80.f, 30.f});
-        m_mainLayer->addChildAtPosition(linkMenu, Anchor::Center, {-180.f - 40.f, -20.f}, false);
+        m_mainLayer->addChildAtPosition(linkMenu, Anchor::Center, {-180.f - 40.f, -40.f}, false);
 
         m_fields->linkBtn = CCMenuItemExt::createSpriteExtraWithFrameName("gj_linkBtn_001.png", .8f, [this](auto){ onLink(); });
         m_fields->linkBtn->setID("link-button");
@@ -93,6 +269,27 @@ class $modify(CustomUI, LevelSettingsLayer) {
         );
         linkMenu->addChildAtPosition(m_fields->unlinkBtn, Anchor::Right, {-15.f, 0.f}, false);
 
+        auto extraSettingsMenu = CCMenu::create();
+        extraSettingsMenu->setContentSize({80.f, 80.f});
+        extraSettingsMenu->setID("extra-settings-menu"_spr);
+        auto extraSettingsLabel = CCLabelBMFont::create("Extra", "goldFont.fnt");
+        extraSettingsLabel->setScale(.7f);
+        extraSettingsMenu->addChildAtPosition(extraSettingsLabel, Anchor::Top, {0.f, -10.f});
+        auto extraSettingsBtn = CCMenuItemExt::createSpriteExtraWithFrameName("GJ_optionsBtn_001.png", .75f, [this](auto){
+            ExtraSettingsMenu::create(m_fields->object, m_fields->settings)->show();
+        });
+        extraSettingsMenu->addChildAtPosition(extraSettingsBtn, Anchor::Center);
+        m_mainLayer->addChildAtPosition(extraSettingsMenu, Anchor::Center, {180.f, 0.f}, false);
+
+        if(!Mod::get()->getSettingValue<bool>("disable-watermark")) {
+            auto watermark = CCLabelBMFont::create("Clean StartPos\nby BlueBlock6", "chatFont.fnt");
+            watermark->setAlignment(cocos2d::kCCTextAlignmentRight);
+            watermark->setScale(.5f);
+            watermark->setOpacity(125);
+            watermark->setAnchorPoint({1.f, 0.f});
+            m_mainLayer->addChildAtPosition(watermark, Anchor::Center, {220.f, -95.f}, false);
+        }
+
         handleTouchPriority(this);
 
         return true;
@@ -101,35 +298,14 @@ class $modify(CustomUI, LevelSettingsLayer) {
     inline CCMenu* createLeftMenu() {
         auto menu = CCMenu::create();
         menu->setLayout(ColumnLayout::create()->setAxisReverse(true)->setAxisAlignment(AxisAlignment::End));
-        menu->setContentSize({100, 225});
+        menu->setContentSize({100, 185});
 
         bool isReal = m_fields->object->getRealStartPos();
         menu->setID("left-menu"_spr);
-        menu->addChild(createToggle("Flip", "flip", 0, m_fields->settings->m_isFlipped));
-        menu->addChild(createToggle("Mini", "mini", 1, m_fields->settings->m_startMini));
-        menu->addChild(createToggle("Dual", "dual", 2, m_fields->settings->m_startDual, isReal));
-        menu->addChild(createToggle("Mirror", "mirror", 3, m_fields->settings->m_mirrorMode, isReal));
-        menu->addChild(createToggle("Free Mode", "free-mode", 4, m_fields->settings->m_fields->isFreeCam, isReal));
-
-        menu->updateLayout();
-        return menu;
-    }
-
-    inline CCMenu* createRightMenu() {
-        auto menu = CCMenu::create();
-        menu->setLayout(ColumnLayout::create()->setAxisReverse(true)->setAxisAlignment(AxisAlignment::End));
-        menu->setContentSize({100, 225});
-
-        bool isReal = m_fields->object->getRealStartPos();
-        menu->setID("right-menu"_spr);
-        menu->addChild(createToggle("Rotate", "rotate", 5, m_fields->settings->m_rotateGameplay, isReal));
-        menu->addChild(createToggle("Reverse", "reverse", 6, m_fields->settings->m_reverseGameplay));
-        menu->addChild(createToggle("Reset Camera", "reset-camera", 7, m_fields->settings->m_resetCamera, isReal));
-        menu->addChild(createToggle("Disable", "disable", 8, m_fields->settings->m_disableStartPos));
-
-        auto btn = CCMenuItemExt::createSpriteExtraWithFrameName("GJ_optionsBtn02_001.png", 1.f, [](auto){ openSettingsPopup(Mod::get(), false); });
-        btn->setID("mod-settings"_spr);
-        menu->addChild(btn);
+        menu->addChild(createToggle("Flip", "flip", 0, this, menu_selector(CustomUI::onToggle), m_fields->settings->m_isFlipped));
+        menu->addChild(createToggle("Mini", "mini", 1, this, menu_selector(CustomUI::onToggle), m_fields->settings->m_startMini));
+        menu->addChild(createToggle("Dual", "dual", 2, this, menu_selector(CustomUI::onToggle), m_fields->settings->m_startDual, isReal));
+        menu->addChild(createToggle("Disable", "disable", 3, this, menu_selector(CustomUI::onToggle), m_fields->settings->m_disableStartPos));
 
         menu->updateLayout();
         return menu;
@@ -163,59 +339,6 @@ class $modify(CustomUI, LevelSettingsLayer) {
         menu->addChild(createSpeedButton("triple", "boost_04_001.png", 3));
         menu->addChild(createSpeedButton("quadruple", "boost_05_001.png", 4));
         menu->updateLayout();
-        return menu;
-    }
-
-    inline CCNode* createInput(CCNode* base, TextInput*& input, const char* title, const std::string& id, CommonFilter filter, const char* placeholder, const std::string& value, bool enabled = true) {
-        base->setID(id + "-node");
-        base->setContentSize({120, 50});
-        base->setAnchorPoint({.5f, .5f});
-
-        auto label = CCLabelBMFont::create(title, "goldFont.fnt");
-        label->setID(id + "-label");
-        label->setScale(.6f);
-        base->addChildAtPosition(label, Anchor::Center, {0, 17});
-
-        input = TextInput::create(80, placeholder);
-        input->setID(id + "-input");
-        input->setEnabled(enabled);
-        input->getInputNode()->setVisible(enabled);
-        input->setCommonFilter(filter);
-        if(value != "0" && value != "0.000") {
-            input->setString(value);
-        }
-        base->addChildAtPosition(input, Anchor::Center, {0, -11});
-
-        return base;
-    }
-
-    inline CCMenu* createToggle(const char* name, const std::string& id, int tag, bool toggle, bool enabled = true) {
-        auto menu = CCMenu::create();
-        menu->setContentSize({80, 40});
-
-        auto label = CCLabelBMFont::create(name, "goldFont.fnt");
-        label->limitLabelWidth(80.f, .7f, .1f);
-        label->setID(id + "-label");
-        menu->addChildAtPosition(label, Anchor::Center, {0, 15});
-
-        CCMenuItemToggler* btn;
-        if(enabled) {
-            btn = CCMenuItemToggler::createWithStandardSprites(this, menu_selector(CustomUI::onToggle), .8f);
-        } else {
-            auto checkOff = CCSpriteGrayscale::createWithSpriteFrameName("GJ_checkOff_001.png");
-            checkOff->setScale(.8f);
-            checkOff->setColor({127, 127, 127});
-            auto checkOn = CCSpriteGrayscale::createWithSpriteFrameName("GJ_checkOn_001.png");
-            checkOn->setScale(.8f);
-            checkOn->setColor({127, 127, 127});
-            btn = CCMenuItemToggler::create(checkOff, checkOn, this, menu_selector(CustomUI::onToggle));
-            btn->setEnabled(false);
-        }
-        btn->setID(id);
-        btn->setTag(tag);
-        btn->toggle(toggle);
-        menu->addChildAtPosition(btn, Anchor::Center, {0, -7});
-
         return menu;
     }
 
@@ -256,12 +379,7 @@ class $modify(CustomUI, LevelSettingsLayer) {
                     m_fields->object->m_linkId != 0
                 );
             } break;
-            case 3: m_fields->settings->m_mirrorMode = state; break;
-            case 4: m_fields->settings->m_fields->isFreeCam = state; break;
-            case 5: m_fields->settings->m_rotateGameplay = state; break;
-            case 6: m_fields->settings->m_reverseGameplay = state; break;
-            case 7: m_fields->settings->m_resetCamera = state; break;
-            case 8: m_fields->settings->m_disableStartPos = state; break;
+            case 3: m_fields->settings->m_disableStartPos = state; break;
         }
     }
 
@@ -340,14 +458,9 @@ class $modify(CustomUI, LevelSettingsLayer) {
 
     $override
     void onClose(CCObject* sender) {
-        if(!m_settingsObject->m_startsWithStartPos) return LevelSettingsLayer::onClose(sender);
-
-        m_fields->settings->m_targetOrder = m_fields->targetOrderInput ? utils::numFromString<int>(m_fields->targetOrderInput->getString()).unwrapOrDefault() : 0;
-        m_fields->settings->m_targetChannel = m_fields->targetChannelInput ? utils::numFromString<int>(m_fields->targetChannelInput->getString()).unwrapOrDefault() : 0;
-        m_fields->settings->m_fields->cameraOffset = m_fields->offsetInput ? utils::numFromString<int>(m_fields->offsetInput->getString()).unwrapOrDefault() : 0;
-        m_fields->settings->m_fields->yVelocity = m_fields->velocityInput ? utils::numFromString<float>(m_fields->velocityInput->getString()).unwrapOrDefault() : 0;
-        m_fields->object->encodeSettings(m_fields->settings);
-
+        if(m_settingsObject->m_startsWithStartPos) {
+            m_fields->object->encodeSettings(m_fields->settings);
+        }
         LevelSettingsLayer::onClose(sender);
     }
 };
