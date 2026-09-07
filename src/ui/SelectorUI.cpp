@@ -48,12 +48,9 @@ bool SelectorUI::init(AdvancedStartPos* startPos) {
     advanced->m_mainLayer->addChildAtPosition(advancedLabel, Anchor::Top, {0.f, 20.f});
 
     this->setKeypadEnabled(true);
-    this->setTouchMode(cocos2d::kCCTouchesOneByOne);
-    this->setTouchEnabled(true);
 
-    geode::queueInMainThread([this](){
-        CCTouchDispatcher::get()->setPriority(-999, this);
-    });
+    auto overlay = SelectorOverlay::create(startPos);
+    this->addChild(overlay);
 
     return true;
 }
@@ -64,26 +61,6 @@ void SelectorUI::onClose(CCObject*) {
 
 void SelectorUI::keyBackClicked() {
     onClose(nullptr);
-}
-
-bool SelectorUI::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent) {
-    float width = CCDirector::get()->getWinSize().width;
-
-    if(pTouch->m_point.x <= width / 2.f) {
-        Mod::get()->setSettingValue<std::string_view>("menu-mode", "Simple");
-        onClose(nullptr);
-        geode::queueInMainThread([this](){ // prevents touch prio issues
-            showStartPosUI(m_startPos);
-        });
-    } else {
-        Mod::get()->setSettingValue<std::string_view>("menu-mode", "Advanced");
-        onClose(nullptr);
-        geode::queueInMainThread([this](){ // prevents touch prio issues
-            showStartPosUI(m_startPos);
-        });
-    }
-
-    return true;
 }
 
 SelectorUI* SelectorUI::create(AdvancedStartPos* startPos) {
@@ -101,3 +78,54 @@ void SelectorUI::show() {
     auto scene = CCScene::get();
     scene->addChild(this, scene->getHighestChildZ() + 1);
 }
+
+bool SelectorOverlay::init(AdvancedStartPos* startPos) {
+    if(!CCLayer::init()) return false;
+
+    this->ignoreAnchorPointForPosition(false);
+    this->setAnchorPoint({0.f, 0.f});
+    this->setTouchMode(cocos2d::kCCTouchesOneByOne);
+    this->setTouchEnabled(true);
+
+    geode::queueInMainThread([this](){
+        CCTouchDispatcher::get()->setPriority(-999, this);
+    });
+
+    m_startPos = startPos;
+
+    return true;
+}
+
+bool SelectorOverlay::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent) {
+    float width = CCDirector::get()->getWinSize().width;
+    
+    auto parent = static_cast<SelectorUI*>(this->getParent());
+
+    if(pTouch->m_point.x <= width / 2.f) {
+        Mod::get()->setSettingValue<std::string_view>("menu-mode", "Simple");
+        parent->onClose(nullptr);
+        geode::queueInMainThread([this](){ // prevents touch prio issues
+            showStartPosUI(m_startPos);
+        });
+    } else {
+        Mod::get()->setSettingValue<std::string_view>("menu-mode", "Advanced");
+        parent->onClose(nullptr);
+        geode::queueInMainThread([this](){ // prevents touch prio issues
+            showStartPosUI(m_startPos);
+        });
+    }
+
+    return true;
+}
+
+SelectorOverlay* SelectorOverlay::create(AdvancedStartPos* startPos) {
+    auto ret = new SelectorOverlay();
+    if(ret && ret->init(startPos)) {
+        ret->autorelease();
+        return ret;
+    } else {
+        CC_SAFE_DELETE(ret);
+        return nullptr;
+    }
+}
+

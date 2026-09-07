@@ -7,10 +7,19 @@ private:
     AdvancedStartPos* m_startPos;
 
     bool init(AdvancedStartPos* startPos);
-    void onClose(CCObject*);
     void keyBackClicked() override;
-    virtual bool ccTouchBegan(cocos2d::CCTouch* pTouch, cocos2d::CCEvent* pEvent) override;
 public:
     static SelectorUI* create(AdvancedStartPos* startPos);
     void show();
+    void onClose(CCObject*);
+};
+
+class SelectorOverlay : public cocos2d::CCLayer {
+private:
+    AdvancedStartPos* m_startPos;
+
+    bool init(AdvancedStartPos* startPos);
+    virtual bool ccTouchBegan(cocos2d::CCTouch* pTouch, cocos2d::CCEvent* pEvent) override;
+public:
+    static SelectorOverlay* create(AdvancedStartPos* startPos);
 };
