@@ -1,3 +1,7 @@
+# 2.1.2
+
+- Fixed selector not working with Better Touch Prio installed
+
 # 2.1.1
 
 - Added multiple menu design options
