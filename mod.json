@@ -6,7 +6,7 @@
 		"mac": "2.2081",
         "ios": "2.2081"
 	},
-	"version": "v2.1.0",
+	"version": "v2.1.1",
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
 	"developer": "BlueBlock6",
@@ -24,6 +24,12 @@
         "geode.node-ids": ">=v1.20.1"
     },
     "settings": {
+        "menu-mode": {
+            "type": "string",
+            "name": "Menu Design",
+            "default": "Simple",
+            "one-of": ["Simple", "Advanced"]
+        },
         "create-startpos-keybind": {
             "type": "keybind",
             "name": "Create StartPos",

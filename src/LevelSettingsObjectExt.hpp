@@ -9,5 +9,6 @@ class $modify(LevelSettingsObjectExt, LevelSettingsObject) {
         float yVelocity = 0;
         float rotationSpeed = 0;
         float rotateSpeed = 0;
+        bool isP2 = false;
     };
 };

@@ -13,6 +13,7 @@ class $modify(AdvancedStartPos, GameObject) {
     void encodeSettings(LevelSettingsObjectExt* settings);
     void setYVelocity(float value);
     float getYVelocity();
+    bool isP2();
 
     $override void customSetup();
 };

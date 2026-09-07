@@ -42,6 +42,7 @@ LevelSettingsObjectExt* AdvancedStartPos::getSettingsObject() {
     auto primary = Links::getPrimary(m_linkId);
     if(primary) {
         auto pSettings = primary->getSettingsObject();
+        settings->m_startSpeed = pSettings->m_startSpeed;
         settings->m_startDual = pSettings->m_startDual;
         settings->m_mirrorMode = pSettings->m_mirrorMode;
         settings->m_fields->isFreeCam = pSettings->m_fields->isFreeCam;
@@ -73,6 +74,10 @@ void AdvancedStartPos::encodeSettings(LevelSettingsObjectExt* settings) {
     if(auto primary = Links::getPrimary(m_linkId)) {
         primary->getSettingsObject()->m_propertykA44 = std::bit_cast<int>(settings->m_fields->yVelocity);
     }
+}
+
+bool AdvancedStartPos::isP2() {
+    return getRealStartPos() == nullptr;
 }
 
 void AdvancedStartPos::customSetup() {
