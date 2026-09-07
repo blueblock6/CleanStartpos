@@ -1,3 +1,8 @@
+# 2.1.1
+
+- Added multiple menu design options
+- Fixed wrong speed being highlighted in Player 2 Start Pos
+
 # 2.1.0
 
 - Redesigned menu

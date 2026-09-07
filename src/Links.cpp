@@ -2,6 +2,7 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/DrawGridLayer.hpp>
+#include "ui/StartPosUI.hpp"
 
 using namespace geode::prelude;
 
@@ -123,13 +124,10 @@ class $modify(EditorUI) {
 
     $override
     void editObject(CCObject* p0) {
-        if(m_selectedObject && m_selectedObject->m_objectID == 34 && m_selectedObject->m_linkId != 0) {
-            auto adv = static_cast<AdvancedStartPos*>(m_selectedObject);
-            LevelSettingsLayer::create(adv->getSettingsObject(), nullptr)->show();
+        if(m_selectedObject && (m_selectedObject->m_objectID == 31 || m_selectedObject->m_objectID == 34)) {
+            auto startPos = modify_cast<AdvancedStartPos*>(m_selectedObject);
+            showStartPosUI(startPos);
         } else {
-            if(m_selectedObject && m_selectedObject->m_objectID == 31) {
-                static_cast<StartPosObject*>(m_selectedObject)->m_startSettings->setUserObject(m_selectedObject);
-            }
             EditorUI::editObject(p0);
         }
     }
