@@ -100,18 +100,19 @@ bool SelectorOverlay::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent) {
     float width = CCDirector::get()->getWinSize().width;
     
     auto parent = static_cast<SelectorUI*>(this->getParent());
+    auto startPos = m_startPos;
 
     if(pTouch->m_point.x <= width / 2.f) {
         Mod::get()->setSettingValue<std::string_view>("menu-mode", "Simple");
         parent->onClose(nullptr);
-        geode::queueInMainThread([this](){ // prevents touch prio issues
-            showStartPosUI(m_startPos);
+        geode::queueInMainThread([startPos](){ // prevents touch prio issues
+            showStartPosUI(startPos);
         });
     } else {
         Mod::get()->setSettingValue<std::string_view>("menu-mode", "Advanced");
         parent->onClose(nullptr);
-        geode::queueInMainThread([this](){ // prevents touch prio issues
-            showStartPosUI(m_startPos);
+        geode::queueInMainThread([startPos](){ // prevents touch prio issues
+            showStartPosUI(startPos);
         });
     }
 
