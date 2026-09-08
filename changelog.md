@@ -1,3 +1,7 @@
+# 2.1.3
+
+- Fixed Selector crash
+
 # 2.1.2
 
 - Fixed selector not working with Better Touch Prio installed
