@@ -158,7 +158,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editorLayer) {
     if(Settings::hideStartPosButton) return true;
 
     m_fields->m_createStartPosButton = CCMenuItemSpriteExtra::create(
-        CircleButtonSprite::createWithSpriteFrameName("edit_eStartPosBtn_001.png", 1.f, CircleBaseColor::Green, CircleBaseSize::Small),
+        CircleButtonSprite::createWithSprite("start-pos.png"_spr, 1.f, CircleBaseColor::Green, CircleBaseSize::Small),
         this,
         menu_selector(HookedEditorUI::onCreateStartPos)
     );

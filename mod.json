@@ -8,12 +8,25 @@
 	},
 	"id": "blueblock6.cleanstartpos",
 	"name": "Clean StartPos",
-	"version": "v2.2.0",
+	"version": "v2.2.1",
 	"developer": "BlueBlock6",
 	"description": "Adds more features to start positions",
 	"dependencies": {
 		"geode.node-ids": ">=v1.24.0-beta.1"
 	},
+    "links": {
+        "source": "https://github.com/blueblock6/CleanStartpos"
+    },
+    "tags": [
+        "editor",
+        "interface",
+        "enhancement"
+    ],
+    "resources": {
+        "sprites": [
+            "rsc/start-pos.png"
+        ]
+    },
     "settings": {
         "create-startpos-keybind": {
             "type": "keybind",

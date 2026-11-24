@@ -1,3 +1,8 @@
+# 2.2.1
+
+- Changed Create StartPos sprite to have more contrast (sprite by Alphalaneous)
+- Fixed missing info in mod.json
+
 # 2.2.0
 
 - Major refactor
