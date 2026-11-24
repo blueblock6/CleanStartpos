@@ -1,0 +1,63 @@
+{
+	"geode": "6.0.0",
+	"gd": {
+		"win": "2.2091",
+		"android": "2.2091",
+		"mac": "2.2091",
+		"ios": "2.2091"
+	},
+	"id": "blueblock6.cleanstartpos",
+	"name": "Clean StartPos",
+	"version": "v2.2.0",
+	"developer": "BlueBlock6",
+	"description": "Adds more features to start positions",
+	"dependencies": {
+		"geode.node-ids": ">=v1.24.0-beta.1"
+	},
+    "settings": {
+        "create-startpos-keybind": {
+            "type": "keybind",
+            "name": "Create StartPos",
+            "description": "Creates a StartPos with the current game state during playtesting",
+            "category": "editor",
+            "migrate-from": "blueblock6.cleanstartpos/create-startpos",
+            "default": "'"
+        },
+        "p1-startpos-color": {
+            "type": "color",
+            "name": "Player 1 StartPos Color",
+            "description": "Color of the Player 1 StartPos in linked pairs",
+            "default": "#00FFFF"
+        },
+        "p2-startpos-color": {
+            "type": "color",
+            "name": "Player 2 StartPos Color",
+            "description": "Color of the Player 2 StartPos in linked pairs",
+            "default": "#FF7000"
+        },
+        "link-line-color": {
+            "type": "color",
+            "name": "Link Line Color",
+            "description": "Color of the line between linked StartPos pairs",
+            "default": "#BFBFBF"
+        },
+        "auto-online": {
+            "type": "bool",
+            "name": "Auto Online",
+            "description": "Automatically enables the Online checkbox when you create a StartPos",
+            "default": true
+        },
+        "hide-startpos-button": {
+            "type": "bool",
+            "name": "Hide Create StartPos Button",
+            "description": "Hides the Create StartPos button from the playtest menu",
+            "default": false
+        },
+        "migrate-data": {
+            "type": "bool",
+            "name": "Migrate Data",
+            "description": "Migrates start position settings from older versions of the mod that were added as vanilla features in newer versions of Geometry Dash",
+            "default": true
+        }
+    }
+}
